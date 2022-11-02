@@ -98,13 +98,13 @@ public class Menu {
 			int opcion = InputOutput.get_int();
 			switch (opcion) {
 			case 1:
-				newpat();
+				viewinf();
 				break;
 			case 2:
-				newpatXML();
+				viewfiles();
 				break;
 			case 3:
-				createHtmlpat();
+				viewdiag();
 				break;
 			case 4:
 				addcovid();
