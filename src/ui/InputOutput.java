@@ -65,4 +65,14 @@ public class InputOutput {
 		}
 		return a;
 	}
+        public static String getFilefromKeyboard() {
+		String a = null;
+		try {
+			System.out.println("Enter the Name of the File:");
+			a = in.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return a;
+	}
 }
