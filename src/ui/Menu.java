@@ -5,7 +5,17 @@
  */
 package ui;
 
+import BITalino.BITalino;
+import BITalino.BITalinoException;
+import BITalino.Frame;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.MessageDigest;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.bluetooth.RemoteDevice;
 import jpa.JPAUserManager;
 import pojos.users.User;
 
@@ -107,7 +117,7 @@ public class Menu {
 				viewdiag();
 				break;
 			case 4:
-				addcovid();
+				addECG();
 				break;
 			case 0:
 				Menu.menuPrinicpal();
@@ -117,4 +127,76 @@ public class Menu {
 		}
 
 	}
+        public static Frame[] frame;
+        
+        private static void addECG(){
+            BITalino bitalino = null;
+        try {
+            bitalino = new BITalino();
+            // find devices
+            //Only works on some OS
+            Vector<RemoteDevice> devices = bitalino.findDevices();
+            System.out.println(devices);
+
+            //You need TO CHANGE THE MAC ADDRESS
+            String macAddress = "98:D3:51:FD:9C:72";
+            int SamplingRate = 10;
+            bitalino.open(macAddress, SamplingRate);
+
+            // start acquisition on analog channels A2 and A6
+            //If you want A1, A3 and A4 you should use {0,2,3}
+            int[] channelsToAcquire = {1, 4};
+            bitalino.start(channelsToAcquire);
+
+            //read 10 samples
+            for (int j = 0; j < 10; j++) {
+
+                //Read a block of 10 samples 
+                frame = bitalino.read(10);
+
+                System.out.println("size block: " + frame.length);
+
+                //Print the samples
+                 try {
+             PrintWriter fichero = null;
+             System.out.println("Introduce el nombre del fichero que desea crear: ");
+             String nombre = "hola";
+             fichero = new PrintWriter(new FileWriter(nombre), true);
+             System.out.println("size block: " + frame.length);
+             int block_size = frame.length;
+                for (int i = 0; i < frame.length; i++) {
+                  
+                    fichero.println((j * block_size + i) + " seq: " + frame[i].seq + " "
+                            + frame[i].analog[0] + " "
+                            + frame[i].analog[1] + " "
+                            + frame[i].analog[2] + " ");
+
+                }
+                fichero.close();
+            
+
+        } catch (IOException e) {
+            System.out.println("No se ha encontrado el archivo");
+        }
+
+            }
+            //stop acquisition
+            bitalino.stop();
+        } catch (BITalinoException ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Throwable ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                //close bluetooth connection
+                if (bitalino != null) {
+                    bitalino.close();
+                }
+            } catch (BITalinoException ex) {
+                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        }
+        
 }
