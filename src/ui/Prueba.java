@@ -8,9 +8,14 @@ package ui;
 import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.Frame;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,71 +28,69 @@ import javax.bluetooth.RemoteDevice;
  */
 public class Prueba {
     
-   public static void main(String[] args) throws Exception {
-		addECG();
-	}
-    
-     public static Frame[] frame;
+   public static void main(String args[]) throws IOException {
+
+        Socket socket = new Socket("10.60.84.251", 9000); // pedir localhost
+        OutputStream outputStream = socket.getOutputStream();
+
+        //File To Read from Bitalino
+        File file = new File("C:\\Users\\carme\\OneDrive\\Documentos\\NetBeansProjects\\InfartionDetectionAppPatient\\Prueba.txt"); // pedir file path
+        BufferedReader br = new BufferedReader(new FileReader(file));
         
-        private static void addECG(){
-            BITalino bitalino = null;
+        //send to the server data from the keyboard intstead of from the file:
+        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        String line;
+        int lineInt;
+      
+         String[] datos = new String[6]; 
+         int caract;
+            int i = 0;
+            char a;
+            String dt = "";
+            while ((caract = br.read()) != -1) {
+                a = (char) caract;
+                if (a != ' ') {
+                    dt = dt + a;
+                } else {
+                    datos[i] = dt;
+                    i++;
+                    dt = "";
+                    while (a != ';' || caract == -1) {
+                        caract = br.read();
+                        a = (char) caract;
+                    }
+                }
+            }
+        
+        outputStream.flush();
+        releaseResources(outputStream, br, socket);
+        System.exit(0);
+    }
+
+    private static void releaseResources(OutputStream outputStream,
+            BufferedReader br, Socket socket) {
         try {
-            bitalino = new BITalino();
-            // find devices
-            //Only works on some OS
-            Vector<RemoteDevice> devices = bitalino.findDevices();
-            System.out.println(devices);
-
-            //You need TO CHANGE THE MAC ADDRESS
-            String macAddress = "98:D3:91:FD:69:49";
-            int SamplingRate = 10;
-            bitalino.open(macAddress, SamplingRate);
-
-            // start acquisition on analog channels A2 and A6
-            //If you want A1, A3 and A4 you should use {0,2,3}
-            int[] channelsToAcquire = {1, 4};
-            bitalino.start(channelsToAcquire);
-             PrintWriter fichero = null;
-             String nombre = InputOutput.getFilefromKeyboard();
-              if (!nombre.endsWith(".txt")) {
-                nombre = nombre + ".txt";}
-                fichero = new PrintWriter(new FileWriter(nombre), true);
-            //read 10 samples
-            for (int j = 0; j < 10; j++) {
-
-                //Read a block of 10 samples 
-                frame = bitalino.read(10);
-
-                //Print the samples
-                int block_size = frame.length;
-                for (int i = 0; i < frame.length; i++) {
-                  
-                    fichero.println((j * block_size + i) + " seq: " + frame[i].seq + " "
-                            + frame[i].analog[0] + " "
-                            + frame[i].analog[1] + " "
-                            + frame[i].analog[2] + " ");
-
-                }
-                fichero.close();
-
-            }
-            //stop acquisition
-            bitalino.stop();
-        } catch (BITalinoException ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Throwable ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
             try {
-                //close bluetooth connection
-                if (bitalino != null) {
-                    bitalino.close();
-                }
-            } catch (BITalinoException ex) {
-                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+                br.close();
 
+            } catch (IOException ex) {
+                Logger.getLogger(Prueba.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                outputStream.close();
+
+            } catch (IOException ex) {
+                Logger.getLogger(Prueba.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+            socket.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(Prueba.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
+    }
     
 }
