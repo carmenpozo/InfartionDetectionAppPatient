@@ -33,7 +33,7 @@ public class Client {
         String line;
         while ((line = br.readLine()) != null) { // reads the file and sends it to the server
             
-            printWriter.write(line);
+            printWriter.println(line);
             
             System.out.println(line);
             

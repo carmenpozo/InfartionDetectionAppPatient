@@ -16,6 +16,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.bluetooth.RemoteDevice;
+import jdbc.JDBCUserManager;
 import jpa.JPAUserManager;
 import pojos.users.User;
 
@@ -26,13 +27,14 @@ import pojos.users.User;
 public class Menu {
     
     private static JPAUserManager paman = new JPAUserManager();
+    private static JDBCUserManager dbman = new JDBCUserManager();
     
     public static void main(String[] args) throws Exception {
 		menuPrinicpal();
 	}
 
 	public static void menuPrinicpal() throws Exception {
-		//dbman.connect();
+		dbman.connect();
 		paman.connect();
 
 		while (true) {
@@ -51,7 +53,7 @@ public class Menu {
 			case 2:
 				login();
 			case 0:
-				//dbman.disconnect();
+				dbman.disconnect();
 				paman.disconnect();
 				System.exit(0);
 				break;

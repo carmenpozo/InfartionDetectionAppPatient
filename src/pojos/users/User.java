@@ -5,11 +5,16 @@
  */
 package pojos.users;
 
+import java.io.Serializable;
+
+
 /**
  *
  * @author carme
  */
-public class User {
+public class User implements Serializable{
+    
+    private static final long serialVersionUID = 4004074793992980971L;
    
 	private Integer id;
 	private String email;
