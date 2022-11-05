@@ -5,8 +5,12 @@
  */
 package jpa;
 import db.ifaces.UserManager;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
@@ -41,9 +45,6 @@ public class JPAUserManager implements UserManager {
 		entman.getTransaction().commit();
 	}
 
-	
-
-
 	@Override
 	public User checkPassword(String email, String password) {
 		try {
@@ -64,5 +65,13 @@ public class JPAUserManager implements UserManager {
 	
 
 
-
+	public static void main(String[] args) throws IOException {
+		// Get the entity manager
+		EntityManager em = Persistence.createEntityManagerFactory("user-company").createEntityManager();
+		em.getTransaction().begin();
+		em.createNativeQuery("PRAGMA foreign_keys=ON").executeUpdate();
+		em.getTransaction().commit();
+        }
+        
+      
 }

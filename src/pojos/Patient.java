@@ -28,8 +28,8 @@ public class Patient implements Serializable {
     private String diagnosis;
     private BITalino bitalino;
     private List<Doctor> doctors;
-    //private  String username;
-    //private String password;
+    private  String username;
+    private String password;
 
     public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, String diagnosis, BITalino bitalino) {
         this.patientId = patientId;

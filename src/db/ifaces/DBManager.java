@@ -4,6 +4,8 @@
  */
 package db.ifaces;
 
+import java.sql.SQLException;
+
 /**
  *
  * @author carme
@@ -12,4 +14,5 @@ public interface DBManager {
     
     public void connect(); // connect to the data base
     public void disconnect();//disconnect from the data base
+    public String getPatientsFullNameByEmail(String email);
 }

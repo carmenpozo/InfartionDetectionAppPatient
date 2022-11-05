@@ -7,7 +7,11 @@ package jdbc;
 import db.ifaces.DBManager;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,7 +50,27 @@ public class JDBCUserManager implements DBManager {
 		}
 	}
 
+    @Override
+    public String getPatientsFullNameByEmail(String email) {
+        String fullName = null;
+        try {
+            String sql = "SELECT name, surname FROM patients WHERE email = ?";
+            PreparedStatement prep = c.prepareStatement(sql);
+            ResultSet rs = prep.executeQuery();
+            prep.setString(1, email);
+            String name = rs.getString("name");
+            String surname = rs.getString("surname");
+            fullName = name + " " + surname;
+            prep.close();
+            rs.close();  
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCUserManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return fullName;
+    }
+
    
-  
+   
 }
 

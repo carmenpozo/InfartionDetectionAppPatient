@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import javax.bluetooth.RemoteDevice;
 import jdbc.JDBCUserManager;
 import jpa.JPAUserManager;
+import pojos.Patient;
 import pojos.users.User;
 
 /**
@@ -91,14 +92,15 @@ public class Menu {
 			System.out.println("Wrong email or password");
 			return;
 		} else {
-                    MenuPatient();
+                   String patName= dbman.getPatientsFullNameByEmail(email);
+                    MenuPatient(patName);
                     
 		}
 
 		// Check the type of the user and redirect her to the proper menu
 	}
         
-        private static void MenuPatient() throws Exception {
+        private static void MenuPatient( String patName) throws Exception {
 		while (true) {
 			System.out.println("\n1.View my information. ");
 			System.out.println("2.View my files ");
@@ -119,7 +121,7 @@ public class Menu {
 				
 				break;
 			case 4:
-				addECG();
+				addECG(patName);
 				break;
 			case 0:
 				Menu.menuPrinicpal();
@@ -131,7 +133,7 @@ public class Menu {
 	}
         public static Frame[] frame;
         
-        private static void addECG(){
+        private static void addECG(String patName){
             BITalino bitalino = null;
         try {
             bitalino = new BITalino();
@@ -150,10 +152,13 @@ public class Menu {
             int[] channelsToAcquire = {1, 4};
             bitalino.start(channelsToAcquire);
              PrintWriter fichero = null;
+             
              String nombre = InputOutput.getFilefromKeyboard();
               if (!nombre.endsWith(".txt")) {
                 nombre = nombre + ".txt";}
                 fichero = new PrintWriter(new FileWriter(nombre), true);
+                fichero.print(java.time.LocalDateTime.now());
+                fichero.print(patName);
             //read 10 samples
             for (int j = 0; j < 10; j++) {
 
