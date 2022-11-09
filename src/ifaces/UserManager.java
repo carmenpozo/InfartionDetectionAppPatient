@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package db.ifaces;
+package ifaces;
 
-import pojos.users.User;
+import pojos.User;
 
 /**
  *
@@ -17,4 +17,7 @@ public interface UserManager {
 	public void disconnect(); //disconnect
 	public void newUser(User u); // create a new user
 	public User checkPassword(String email, String password); // check if the password is correct 
+        public User checkEmail (String email);
+        public void updateUser(User u, byte[] password);
+            
 }

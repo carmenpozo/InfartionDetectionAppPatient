@@ -4,7 +4,7 @@
  */
 package jdbc;
 
-import db.ifaces.DBManager;
+import ifaces.DBManager;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

@@ -27,11 +27,9 @@ public class Patient implements Serializable {
     private final String email;
     private String diagnosis;
     private BITalino bitalino;
-    private List<Doctor> doctors;
-    private  String username;
-    private String password;
+    private Integer userId;
 
-    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, String diagnosis, BITalino bitalino) {
+    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, String diagnosis, Integer userId) {
         this.patientId = patientId;
         this.name = name;
         this.surname = surname;
@@ -40,7 +38,8 @@ public class Patient implements Serializable {
         this.bloodType = bloodType;
         this.email = email;
         this.diagnosis = diagnosis;
-        this.bitalino = bitalino;
+        this.bitalino = null;
+        this.userId= userId;
     }
 
     public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, String diagnosis) {
@@ -52,9 +51,8 @@ public class Patient implements Serializable {
         this.bloodType = bloodType;
         this.email = email;
         this.diagnosis = diagnosis;
+        this.bitalino = null;
     }
-    
-
 
     public Integer getPatientId() {
         return patientId;
@@ -99,11 +97,11 @@ public class Patient implements Serializable {
     public String getDiagnosis() {
         return diagnosis;
     }
-
+    
     public void setDiagnosis(String diagnosis) {
         this.diagnosis = diagnosis;
     }
-
+    
     public BITalino getBitalino() {
         return bitalino;
     }
@@ -111,27 +109,31 @@ public class Patient implements Serializable {
     public void setBitalino(BITalino bitalino) {
         this.bitalino = bitalino;
     }
-
-    public List<Doctor> getDoctors() {
-        return doctors;
+    
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setDoctors(List<Doctor> doctors) {
-        this.doctors = doctors;
+    @Override
+    public String toString() {
+        return "Patient{" + "patientId=" + patientId + ", name=" + name + ", surname=" + surname +
+                ", gender=" + gender + ", birthDate=" + birthDate + ", bloodType=" + bloodType + 
+                ", email=" + email + ", diagnosis=" + diagnosis + ", bitalino=" + bitalino + ", userId=" + userId + '}';
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.patientId);
-        hash = 89 * hash + Objects.hashCode(this.name);
-        hash = 89 * hash + Objects.hashCode(this.surname);
-        hash = 89 * hash + Objects.hashCode(this.gender);
-        hash = 89 * hash + Objects.hashCode(this.birthDate);
-        hash = 89 * hash + Objects.hashCode(this.bloodType);
-        hash = 89 * hash + Objects.hashCode(this.email);
-        hash = 89 * hash + Objects.hashCode(this.diagnosis);
-        hash = 89 * hash + Objects.hashCode(this.bitalino);
+        hash = 73 * hash + Objects.hashCode(this.patientId);
+        hash = 73 * hash + Objects.hashCode(this.name);
+        hash = 73 * hash + Objects.hashCode(this.surname);
+        hash = 73 * hash + Objects.hashCode(this.gender);
+        hash = 73 * hash + Objects.hashCode(this.birthDate);
+        hash = 73 * hash + Objects.hashCode(this.bloodType);
+        hash = 73 * hash + Objects.hashCode(this.email);
+        hash = 73 * hash + Objects.hashCode(this.diagnosis);
+        hash = 73 * hash + Objects.hashCode(this.bitalino);
+        hash = 73 * hash + Objects.hashCode(this.userId);
         return hash;
     }
 
@@ -171,12 +173,13 @@ public class Patient implements Serializable {
         if (!Objects.equals(this.birthDate, other.birthDate)) {
             return false;
         }
-        return Objects.equals(this.bitalino, other.bitalino);
+        if (!Objects.equals(this.bitalino, other.bitalino)) {
+            return false;
+        }
+        return Objects.equals(this.userId, other.userId);
     }
     
     
     
-    
 
-    
 }

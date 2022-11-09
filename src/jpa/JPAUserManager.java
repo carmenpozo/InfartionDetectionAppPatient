@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package jpa;
-import db.ifaces.UserManager;
+import ifaces.UserManager;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,7 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import pojos.users.User;
+import pojos.User;
 
 /**
  *
@@ -62,6 +62,32 @@ public class JPAUserManager implements UserManager {
 		}
 		return null;
 	}
+        
+        @Override
+	public User checkEmail(String email) {	
+		User u = null;
+		Query q = entman.createNativeQuery("SELECT * FROM users WHERE email = ?", User.class);
+		q.setParameter(1, email);
+		try {
+			u = (User) q.getSingleResult();
+		}
+		catch (NoResultException e) {
+			u = null;
+		}
+		return u;	
+	}
+
+    @Override
+    public void updateUser(User u, byte[] password) {
+        Query q = entman.createNativeQuery("SELECT * FROM users WHERE id = ?", User.class);
+        q.setParameter(1, u.getId());
+        User userToUpdate = (User) q.getSingleResult();
+        entman.getTransaction().begin();
+        userToUpdate.setEmail(u.getEmail());
+        userToUpdate.setPassword(password);
+        entman.getTransaction().commit();
+
+    }
 	
 
 
