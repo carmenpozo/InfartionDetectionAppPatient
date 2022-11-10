@@ -4,11 +4,10 @@
  */
 package pojos;
 
-import BITalino.BITalino;
 import java.io.Serializable;
 import java.util.Objects;
 import java.sql.Date;
-import java.util.List;
+
 
 /**
  *
@@ -18,18 +17,19 @@ public class Patient implements Serializable {
     
     private static final long serialVersionUID = -1L;
     
-    private final Integer patientId;
+    private Integer patientId;
     private String name;
     private String surname;
     private String gender;
-    private final Date birthDate;
-    private final String bloodType;
-    private final String email;
+    private Date birthDate;
+    private String bloodType;
+    private String email;
+    private byte[] password;
     private String diagnosis;
-    private BITalino bitalino;
+    private String bitalino;
     private Integer userId;
 
-    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, String diagnosis, Integer userId) {
+    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, byte[] password ,String diagnosis, String bitalino,Integer userId) {
         this.patientId = patientId;
         this.name = name;
         this.surname = surname;
@@ -37,12 +37,14 @@ public class Patient implements Serializable {
         this.birthDate = birthDate;
         this.bloodType = bloodType;
         this.email = email;
+        this.password = password;
         this.diagnosis = diagnosis;
-        this.bitalino = null;
+        this.bitalino = bitalino;
         this.userId= userId;
+     
     }
 
-    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, String diagnosis) {
+    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, byte[] password, String diagnosis) {
         this.patientId = patientId;
         this.name = name;
         this.surname = surname;
@@ -50,8 +52,14 @@ public class Patient implements Serializable {
         this.birthDate = birthDate;
         this.bloodType = bloodType;
         this.email = email;
+        this.password = password;
         this.diagnosis = diagnosis;
         this.bitalino = null;
+    }
+
+    public Patient(String email, byte[] hash) {
+        this.email = email;
+        this.password = hash;
     }
 
     public Integer getPatientId() {
@@ -93,6 +101,14 @@ public class Patient implements Serializable {
     public String getEmail() {
         return email;
     }
+    public byte[] getPassword() {
+        return password;
+    }
+    
+    public void setPassword(byte[] password) {
+        this.password = password;
+    }
+    
 
     public String getDiagnosis() {
         return diagnosis;
@@ -102,11 +118,11 @@ public class Patient implements Serializable {
         this.diagnosis = diagnosis;
     }
     
-    public BITalino getBitalino() {
+    public String getBitalino() {
         return bitalino;
     }
 
-    public void setBitalino(BITalino bitalino) {
+    public void setBitalino(String bitalino) {
         this.bitalino = bitalino;
     }
     
@@ -131,6 +147,7 @@ public class Patient implements Serializable {
         hash = 73 * hash + Objects.hashCode(this.birthDate);
         hash = 73 * hash + Objects.hashCode(this.bloodType);
         hash = 73 * hash + Objects.hashCode(this.email);
+        hash = 73 * hash + Objects.hashCode(this.password);
         hash = 73 * hash + Objects.hashCode(this.diagnosis);
         hash = 73 * hash + Objects.hashCode(this.bitalino);
         hash = 73 * hash + Objects.hashCode(this.userId);
@@ -178,8 +195,7 @@ public class Patient implements Serializable {
         }
         return Objects.equals(this.userId, other.userId);
     }
-    
-    
+
     
 
 }

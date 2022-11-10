@@ -52,6 +52,7 @@ public class JDBCManager {
                     + "	birthDate DATE NOT NULL,"                   
                     + " bloodType TEXT NOT NULL,"
                     + "	email     TEXT NOT NULL,"
+                    + " password    TEXT NOT NULL,"
                     + "	diagnosis     TEXT NOT NULL,"
                     + "	ECG     TEXT NOT NULL,"
                     + " userId INTEGER REFERENCES users(id) ON DELETE CASCADE"

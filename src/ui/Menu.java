@@ -9,17 +9,13 @@ import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.Frame;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.bluetooth.RemoteDevice;
-import jdbc.JDBCUserManager;
-import jpa.JPAUserManager;
 import pojos.Patient;
-import pojos.User;
 import java.util.Scanner;
 import jdbc.JDBCManager;
 import jdbc.JDBCPatientManager;
@@ -30,8 +26,8 @@ import jdbc.JDBCPatientManager;
  */
 public class Menu {
 
-    private static JPAUserManager paman = new JPAUserManager();
-    private static JDBCUserManager dbman = new JDBCUserManager();
+   // private static JPAUserManager paman = new JPAUserManager();
+   // private static JDBCUserManager dbman = new JDBCUserManager();
     private static JDBCManager m = new JDBCManager();
     private static JDBCPatientManager pm = new JDBCPatientManager(m);
 
@@ -42,8 +38,8 @@ public class Menu {
     }
 
     public static void menuPrinicpal() throws Exception {
-        dbman.connect();
-        paman.connect();
+        m.getConnection();
+       // paman.connect();
 
         while (true) {
             System.out.println("\nWELCOME! ");
@@ -64,8 +60,8 @@ public class Menu {
                 case 3:
                     changePassword();
                 case 0:
-                    dbman.disconnect();
-                    paman.disconnect();
+                    m.disconnect();
+                   // paman.disconnect();
                     System.exit(0);
                     break;
                 default:
@@ -79,7 +75,7 @@ public class Menu {
         System.out.println("Enter your email address:");
         String email = InputOutput.get_String();
 
-        while (paman.checkEmail(email) != null) {
+        while (pm.checkEmail(email) != null) {
             System.out.println("The email is already registered. Introduce another email: ");
             email = InputOutput.get_String();
         }
@@ -90,15 +86,16 @@ public class Menu {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(password.getBytes());
         byte[] hash = md.digest();
-        User user = new User(email, hash);
-        paman.newUser(user);
+        Patient p = new Patient(email, hash);
+        pm.addPatient(p);
     }
 
     private static void login() throws Exception {
         // Ask the user for an email
         System.out.println("Enter your email address: ");
         String email = InputOutput.get_String();
-        while (paman.checkEmail(email) == null) {
+        while (pm.checkEmail(email) == null) {
+            
             System.out.println("The email is not registered. Introduce another email: ");
             email = InputOutput.get_String();
         }
@@ -106,24 +103,24 @@ public class Menu {
         // Ask the user for a password
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
-        while (paman.checkPassword(email, password) == null) {
+        while (pm.checkPassword(email, password) == null) {
             System.out.println("The password introduced is not valid, try again.");
             password = InputOutput.get_String();
         }
-        User u = paman.checkPassword(email, password);
+        Patient p = pm.checkPassword(email, password);
 
-        MenuPatient(u);
+        MenuPatient(p);
     }
 
     // Check the type of the user and redirect her to the proper menu
     private static void changePassword() {
         sc = new Scanner(System.in);
         try {
-            System.out.println("Username:");
-            String username = InputOutput.get_String();
+            System.out.println("Email:");
+            String email = InputOutput.get_String();
             System.out.println("Password:");
             String password = InputOutput.get_String();
-            User user = paman.checkPassword(username, password);
+            Patient patient = pm.checkPassword(email, password);
             System.out.println("Introduce the new password: ");
             String newPassword1 = InputOutput.get_String();
             System.out.println("Confirm your new password: ");
@@ -132,7 +129,7 @@ public class Menu {
                 MessageDigest md = MessageDigest.getInstance("MD5");
                 md.update(newPassword1.getBytes());
                 byte[] hash = md.digest();
-                paman.updateUser(user, hash);
+                pm.UpdatePatient(patient, hash);
                 System.out.println("Password updated");
             } else {
                 System.out.println("The passwords don't match");
@@ -142,9 +139,9 @@ public class Menu {
         }
     }
 
-    private static void MenuPatient(User user) throws Exception {
+    private static void MenuPatient(Patient p) throws Exception {
         sc = new Scanner(System.in);
-        Patient patient = pm.getPatientByUserId(user.getId());
+        Patient patient = pm.getPatientByUserId(p.getPatientId());
         while (true) {
             System.out.println("\n1.View my information. ");
             System.out.println("2.View my files ");
