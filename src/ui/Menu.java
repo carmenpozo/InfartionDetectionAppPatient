@@ -8,8 +8,10 @@ package ui;
 import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.Frame;
+import client.Client;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.security.MessageDigest;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -17,9 +19,8 @@ import java.util.logging.Logger;
 import javax.bluetooth.RemoteDevice;
 import pojos.Patient;
 import java.util.Scanner;
-import jdbc.JDBCManager;
-import jdbc.JDBCPatientManager;
 import java.sql.Date;
+import java.util.List;
 
 /**
  *
@@ -29,9 +30,7 @@ public class Menu {
 
     // private static JPAUserManager paman = new JPAUserManager();
     // private static JDBCUserManager dbman = new JDBCUserManager();
-    private static JDBCManager m = new JDBCManager();
-    private static JDBCPatientManager pm = new JDBCPatientManager(m);
-
+    private static Client client = new Client();
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) throws Exception {
@@ -39,9 +38,7 @@ public class Menu {
     }
 
     public static void menuPrinicpal() throws Exception {
-        m.getConnection();
-        // paman.connect();
-
+        Socket socket = client.ConnectionWithServer();
         while (true) {
             System.out.println("\nWELCOME! ");
             System.out.println("\nChoose an option : ");
@@ -54,15 +51,13 @@ public class Menu {
 
             switch (opcion) {
                 case 1:
-                    register();
+                    register(socket);
                     break;
                 case 2:
-                    login();
+                    login(socket);
                 case 3:
                     changePassword();
                 case 0:
-                    m.disconnect();
-                    // paman.disconnect();
                     System.exit(0);
                     break;
                 default:
@@ -71,16 +66,10 @@ public class Menu {
         }
     }
 
-    private static void register() throws Exception {
+    private static void register(Socket socket) throws Exception {
         System.out.println("--- NEW ACCOUNT ---");
         System.out.println("Enter your email address:");
         String email = InputOutput.get_String();
-
-        while (pm.checkEmail(email) != null) {
-            System.out.println("The email is already registered. Introduce another email: ");
-            email = InputOutput.get_String();
-        }
-
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
         // Generate the hash
@@ -147,18 +136,13 @@ public class Menu {
 
         Patient p = new Patient(name, surname, gender, birthdate, bt, email, hash, symptoms, bitalino);
 
-        pm.addPatient(p);
+        client.sendPatient(p, socket);
     }
 
-    private static void login() throws Exception {
+    private static void login(Socket socket) throws Exception {
         // Ask the user for an email
         System.out.println("Enter your email address: ");
         String email = InputOutput.get_String();
-        while (pm.checkEmail(email) == null) {
-
-            System.out.println("The email is not registered. Introduce another email: ");
-            email = InputOutput.get_String();
-        }
 
         // Ask the user for a password
         System.out.println("Enter your password:");
@@ -169,7 +153,7 @@ public class Menu {
         }
         Patient p = pm.checkPassword(email, password);
 
-        MenuPatient(p);
+        MenuPatient(p, socket);
     }
 
     // Check the type of the user and redirect her to the proper menu
@@ -199,38 +183,26 @@ public class Menu {
         }
     }
 
-    private static void MenuPatient(Patient p) throws Exception {
+    private static void MenuPatient(Patient p, Socket socket) throws Exception {
         sc = new Scanner(System.in);
-        Patient patient = pm.getPatientByUserId(p.getPatientId());
         while (true) {
             System.out.println("\n1.View my information. ");
             System.out.println("2.View my files ");
-            System.out.println("3.Perform a new Electorcardiogram");
-            System.out.println("3.Perform an Accelerometer Test");
+            System.out.println("3.Perform a new Bitalino");
             System.out.println("0.Return ");
             System.out.println("\nChoose an option : ");
 
             int opcion = InputOutput.get_int();
             switch (opcion) {
                 case 1: {
-                    System.out.println("\n----- Mr/Mrs " + patient.getName() + " " + patient.getSurname() + " profile -----\n");
-                    System.out.println(patient);
-                    System.out.println("\n");
-                    System.out.println("0. Return");
-                    int choice = InputOutput.get_int();
-                    if (choice == 0) {
-                        return;
-                    }
+                    ViewInfo(socket, p);
                     break;
                 }
                 case 2:
-                    PatientFiles();
+                    PatientFiles(socket, p);
                     break;
                 case 3:
-                    addECG(patient);
-                    break;
-                case 4:
-                    addAccelerometer(patient);
+                    addECG(socket, p);
                     break;
                 case 0:
                     Menu.menuPrinicpal();
@@ -243,13 +215,25 @@ public class Menu {
 
     }
 
-    private static void PatientFiles() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private static void ViewInfo(Socket socket, Patient p) {
+        int id = p.getPatientId();
+        client.sendOption(socket, id, 1);
+        List information = client.receivePatient(socket);
+        System.out.println(information);
+
+    }
+
+    private static void PatientFiles(Socket socket, Patient p) {
+        int id = p.getPatientId();
+        client.sendOption(socket, id, 2);
+        List names = client.receiveFilesNames(socket);
+        System.out.println(names);
+
     }
 
     public static Frame[] frame;
 
-    private static void addECG(Patient patient) {
+    private static void addECG(Socket socket,Patient patient) {
         BITalino bitalino = null;
         try {
             bitalino = new BITalino();
@@ -295,7 +279,8 @@ public class Menu {
 
                 }
                 fichero.close();
-
+                client.sendOpt(socket,3);
+                client.sendFileBitalino(nombre, socket);
             }
             //stop acquisition
             bitalino.stop();
@@ -309,6 +294,7 @@ public class Menu {
                 if (bitalino != null) {
                     bitalino.close();
                 }
+                
             } catch (BITalinoException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -316,7 +302,5 @@ public class Menu {
 
     }
 
-    private static void addAccelerometer(Patient patient) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+
 }

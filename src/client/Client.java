@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,7 +36,7 @@ public class Client {
         return socket;
     }
 
-    public static void sendFileBitalino(String filename, Socket socket) {
+    public void sendFileBitalino(String filename, Socket socket) {
 
         try {
             OutputStream outputStream = socket.getOutputStream();
@@ -59,8 +59,6 @@ public class Client {
                 }
             }
 
-            releaseResources(printWriter, br, socket);
-            System.exit(0);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -78,7 +76,47 @@ public class Client {
         }
     }
 
-    public static List receivePatient(Socket socket) {
+    public void sendOption(Socket socket, int id, int option){
+        OutputStream outputStream = null;
+        try {
+            outputStream = socket.getOutputStream();
+            while (true) {
+                //And send it to the server
+                outputStream.write(option);
+                outputStream.write(id);
+                   
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                outputStream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+        public void sendOpt(Socket socket, int option){
+        OutputStream outputStream = null;
+        try {
+            outputStream = socket.getOutputStream();
+            while (true) {
+                //And send it to the server
+                outputStream.write(option);
+                   
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                outputStream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    public List receivePatient(Socket socket) {
 
         BufferedReader bufferedReader = null;
         List<String> atributes = null;
@@ -93,14 +131,12 @@ public class Client {
             return atributes;
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            releaseResources(bufferedReader, socket);
-        }
+        } 
         return atributes;
 
     }
 
-    public static List<String> receiveFilesNames(Socket socket) {
+    public List<String> receiveFilesNames(Socket socket) {
        BufferedReader bufferedReader = null;
         List<String> names = null;
         try {
@@ -114,9 +150,7 @@ public class Client {
             return names;
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            releaseResources(bufferedReader, socket);
-        }
+        } 
         return names;
 
     }
