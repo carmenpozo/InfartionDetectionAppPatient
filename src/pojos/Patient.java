@@ -56,6 +56,8 @@ public class Patient implements Serializable {
      
     }
 
+   
+
     /*public Patient(Integer patientId, String email, byte[] hash) {
         this.email = email;
         this.password = hash;
@@ -64,7 +66,9 @@ public class Patient implements Serializable {
     public Integer getPatientId() {
         return patientId;
     }
-
+    public void setPatientId(Integer PatientId) {
+        this.patientId = patientId;
+    }
     public String getName() {
         return name;
     }

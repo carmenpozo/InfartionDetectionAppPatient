@@ -76,6 +76,17 @@ public class Client {
         }
     }
 
+        public void sendLogin(String email ,String password, Socket socket) {
+
+        try {
+            PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
+            printWriter.println(email);
+            printWriter.println(password);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+        
     public void sendOption(Socket socket, int id, int option){
         OutputStream outputStream = null;
         try {

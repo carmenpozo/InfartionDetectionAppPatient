@@ -135,7 +135,8 @@ public class Menu {
         String bitalino = InputOutput.get_String();
 
         Patient p = new Patient(name, surname, gender, birthdate, bt, email, hash, symptoms, bitalino);
-
+        
+        client.sendOpt(socket, 4);
         client.sendPatient(p, socket);
     }
 
@@ -147,12 +148,12 @@ public class Menu {
         // Ask the user for a password
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
-        while (pm.checkPassword(email, password) == null) {
-            System.out.println("The password introduced is not valid, try again.");
-            password = InputOutput.get_String();
-        }
-        Patient p = pm.checkPassword(email, password);
-
+    
+        client.sendOpt(socket, 4);
+        client.sendLogin(email, password, socket);
+        List pat = client.receivePatient(socket);
+        Patient p = null;
+        p.setPatientId((Integer) pat.get(0));
         MenuPatient(p, socket);
     }
 
