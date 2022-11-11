@@ -19,6 +19,7 @@ import pojos.Patient;
 import java.util.Scanner;
 import jdbc.JDBCManager;
 import jdbc.JDBCPatientManager;
+import java.sql.Date;
 
 /**
  *
@@ -26,8 +27,8 @@ import jdbc.JDBCPatientManager;
  */
 public class Menu {
 
-   // private static JPAUserManager paman = new JPAUserManager();
-   // private static JDBCUserManager dbman = new JDBCUserManager();
+    // private static JPAUserManager paman = new JPAUserManager();
+    // private static JDBCUserManager dbman = new JDBCUserManager();
     private static JDBCManager m = new JDBCManager();
     private static JDBCPatientManager pm = new JDBCPatientManager(m);
 
@@ -39,7 +40,7 @@ public class Menu {
 
     public static void menuPrinicpal() throws Exception {
         m.getConnection();
-       // paman.connect();
+        // paman.connect();
 
         while (true) {
             System.out.println("\nWELCOME! ");
@@ -61,7 +62,7 @@ public class Menu {
                     changePassword();
                 case 0:
                     m.disconnect();
-                   // paman.disconnect();
+                    // paman.disconnect();
                     System.exit(0);
                     break;
                 default:
@@ -86,7 +87,66 @@ public class Menu {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(password.getBytes());
         byte[] hash = md.digest();
-        Patient p = new Patient(email, hash);
+
+        System.out.println("Name: ");
+        String name = InputOutput.get_String();
+        System.out.println("Surname: ");
+        String surname = InputOutput.get_String();
+        System.out.println("Gender: ");
+        String gender = InputOutput.get_String();
+        if (gender.equalsIgnoreCase("male")) {
+            gender = "Male";
+        }
+        if (gender.equalsIgnoreCase("female")) {
+            gender = "Female";
+        }
+        while (!(gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("female"))) {
+            System.out.print("Introduce a valid gender (male/female): ");
+            gender = InputOutput.get_String();
+        }
+
+        System.out.println("Date of birth (year-month-day): ");
+        Date birthdate = null;
+        try {
+            birthdate = Date.valueOf(InputOutput.get_String());
+        } catch (Exception e1) {
+            birthdate = null;
+        }
+        while (birthdate == null) {
+            System.out.println("Please introduce a valid date: ");
+            try {
+                birthdate = Date.valueOf(InputOutput.get_String());
+            } catch (Exception e2) {
+                birthdate = null;
+            }
+        }
+        System.out.println("Bloodtype, just the letter (A, B, AB, O): ");
+        String bt = InputOutput.get_String();
+
+        if (bt.equals("a")) {
+            bt = "A";
+        }
+        if (bt.equals("b")) {
+            bt = "B";
+        }
+        if (bt.equals("o")) {
+            bt = "O";
+        }
+        if (bt.equals("ab")) {
+            bt = "AB";
+        }
+        while (!(bt.equalsIgnoreCase("a") || bt.equalsIgnoreCase("b") || bt.equalsIgnoreCase("o") || bt.equalsIgnoreCase("ab"))) {
+            System.out.print("Introduce a valid bloodtype (A, B, AB, O):  ");
+            bt = InputOutput.get_String();
+        }
+
+        System.out.println("Symptoms: ");
+        String symptoms = InputOutput.get_String();
+        System.out.println("MAC BITalino: ");
+        String bitalino = InputOutput.get_String();
+
+        Patient p = new Patient(name, surname, gender, birthdate, bt, email, hash, symptoms, bitalino);
+
         pm.addPatient(p);
     }
 
@@ -95,7 +155,7 @@ public class Menu {
         System.out.println("Enter your email address: ");
         String email = InputOutput.get_String();
         while (pm.checkEmail(email) == null) {
-            
+
             System.out.println("The email is not registered. Introduce another email: ");
             email = InputOutput.get_String();
         }
@@ -152,13 +212,15 @@ public class Menu {
 
             int opcion = InputOutput.get_int();
             switch (opcion) {
-                case 1:{
+                case 1: {
                     System.out.println("\n----- Mr/Mrs " + patient.getName() + " " + patient.getSurname() + " profile -----\n");
                     System.out.println(patient);
-                    System.out.println("\n"); 
+                    System.out.println("\n");
                     System.out.println("0. Return");
                     int choice = InputOutput.get_int();
-                    if(choice == 0) return;
+                    if (choice == 0) {
+                        return;
+                    }
                     break;
                 }
                 case 2:

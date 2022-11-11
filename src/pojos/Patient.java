@@ -7,6 +7,7 @@ package pojos;
 import java.io.Serializable;
 import java.util.Objects;
 import java.sql.Date;
+import java.util.Arrays;
 
 
 /**
@@ -21,15 +22,14 @@ public class Patient implements Serializable {
     private String name;
     private String surname;
     private String gender;
-    private Date birthDate;
-    private String bloodType;
-    private String email;
+    private final Date birthDate;
+    private final String bloodType;
+    private final String email;
     private byte[] password;
-    private String diagnosis;
+    private String symptoms;
     private String bitalino;
-    private Integer userId;
 
-    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, byte[] password ,String diagnosis, String bitalino,Integer userId) {
+    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, byte[] password, String symptoms, String bitalino) {
         this.patientId = patientId;
         this.name = name;
         this.surname = surname;
@@ -38,29 +38,28 @@ public class Patient implements Serializable {
         this.bloodType = bloodType;
         this.email = email;
         this.password = password;
-        this.diagnosis = diagnosis;
+        this.symptoms = symptoms;
         this.bitalino = bitalino;
-        this.userId= userId;
+     
+    }
+    
+        public Patient(String name, String surname, String gender, Date birthDate, String bloodType, String email, byte[] password ,String symptoms, String bitalino) {
+        this.name = name;
+        this.surname = surname;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.bloodType = bloodType;
+        this.email = email;
+        this.password = password;
+        this.symptoms = symptoms;
+        this.bitalino = bitalino;
      
     }
 
-    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, byte[] password, String diagnosis) {
-        this.patientId = patientId;
-        this.name = name;
-        this.surname = surname;
-        this.gender = gender;
-        this.birthDate = birthDate;
-        this.bloodType = bloodType;
-        this.email = email;
-        this.password = password;
-        this.diagnosis = diagnosis;
-        this.bitalino = null;
-    }
-
-    public Patient(String email, byte[] hash) {
+    /*public Patient(Integer patientId, String email, byte[] hash) {
         this.email = email;
         this.password = hash;
-    }
+    }*/
 
     public Integer getPatientId() {
         return patientId;
@@ -108,14 +107,13 @@ public class Patient implements Serializable {
     public void setPassword(byte[] password) {
         this.password = password;
     }
-    
 
-    public String getDiagnosis() {
-        return diagnosis;
+    public String getSymptoms() {
+        return symptoms;
     }
-    
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
+
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
     }
     
     public String getBitalino() {
@@ -125,32 +123,20 @@ public class Patient implements Serializable {
     public void setBitalino(String bitalino) {
         this.bitalino = bitalino;
     }
-    
-    public Integer getUserId() {
-        return userId;
-    }
-
-    @Override
-    public String toString() {
-        return "Patient{" + "patientId=" + patientId + ", name=" + name + ", surname=" + surname +
-                ", gender=" + gender + ", birthDate=" + birthDate + ", bloodType=" + bloodType + 
-                ", email=" + email + ", diagnosis=" + diagnosis + ", bitalino=" + bitalino + ", userId=" + userId + '}';
-    }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 73 * hash + Objects.hashCode(this.patientId);
-        hash = 73 * hash + Objects.hashCode(this.name);
-        hash = 73 * hash + Objects.hashCode(this.surname);
-        hash = 73 * hash + Objects.hashCode(this.gender);
-        hash = 73 * hash + Objects.hashCode(this.birthDate);
-        hash = 73 * hash + Objects.hashCode(this.bloodType);
-        hash = 73 * hash + Objects.hashCode(this.email);
-        hash = 73 * hash + Objects.hashCode(this.password);
-        hash = 73 * hash + Objects.hashCode(this.diagnosis);
-        hash = 73 * hash + Objects.hashCode(this.bitalino);
-        hash = 73 * hash + Objects.hashCode(this.userId);
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.patientId);
+        hash = 31 * hash + Objects.hashCode(this.name);
+        hash = 31 * hash + Objects.hashCode(this.surname);
+        hash = 31 * hash + Objects.hashCode(this.gender);
+        hash = 31 * hash + Objects.hashCode(this.birthDate);
+        hash = 31 * hash + Objects.hashCode(this.bloodType);
+        hash = 31 * hash + Objects.hashCode(this.email);
+        hash = 31 * hash + Arrays.hashCode(this.password);
+        hash = 31 * hash + Objects.hashCode(this.symptoms);
+        hash = 31 * hash + Objects.hashCode(this.bitalino);
         return hash;
     }
 
@@ -181,7 +167,10 @@ public class Patient implements Serializable {
         if (!Objects.equals(this.email, other.email)) {
             return false;
         }
-        if (!Objects.equals(this.diagnosis, other.diagnosis)) {
+        if (!Objects.equals(this.symptoms, other.symptoms)) {
+            return false;
+        }
+        if (!Objects.equals(this.bitalino, other.bitalino)) {
             return false;
         }
         if (!Objects.equals(this.patientId, other.patientId)) {
@@ -190,12 +179,23 @@ public class Patient implements Serializable {
         if (!Objects.equals(this.birthDate, other.birthDate)) {
             return false;
         }
-        if (!Objects.equals(this.bitalino, other.bitalino)) {
-            return false;
-        }
-        return Objects.equals(this.userId, other.userId);
+        return Arrays.equals(this.password, other.password);
+    }
+
+    @Override
+    public String toString() {
+        return "Patient{" + "patientId=" + patientId + ", name=" + name + ", surname=" + surname 
+                + ", gender=" + gender + ", birthDate=" + birthDate + ", bloodType=" + bloodType 
+                + ", email=" + email + ", password=" + password + ", symptoms=" + symptoms + ", bitalino=" + bitalino + '}';
+    }
+    
+    public String toString2() {
+        return patientId + "\n"+ name + "\n" + surname + "\n" + gender + "\n" + birthDate + "\n" + bloodType + 
+                "\n" + email + "\n" + password + "\n" + symptoms + "\n" + bitalino ;
     }
 
     
+    
+
 
 }
