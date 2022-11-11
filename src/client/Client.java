@@ -26,10 +26,10 @@ import pojos.Patient;
  */
 public class Client {
 
-    public static Socket ConnectionWithServer() {
+    public Socket ConnectionWithServer(String ip) {
         Socket socket = new Socket();
         try {
-            socket = new Socket("10.60.84.251", 9000);
+            socket = new Socket(ip, 9000);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -38,13 +38,22 @@ public class Menu {
     }
 
     public static void menuPrinicpal() throws Exception {
-        Socket socket = client.ConnectionWithServer();
+        System.out.println("Introduce the IP of the server you want to connect to: ");
+        String ip = InputOutput.get_String();
+        Socket socket = client.ConnectionWithServer(ip);
+        while (socket.getInetAddress() == null){
+            System.out.println("Error, the connection to the server failed. \n Introduce another IP: ");
+            ip = InputOutput.get_String();
+            socket = client.ConnectionWithServer(ip);
+        }
+        sc = new Scanner(System.in);
+        
         while (true) {
             System.out.println("\nWELCOME! ");
             System.out.println("\nChoose an option : ");
             System.out.println("1.Register ");
             System.out.println("2.Log in");
-            System.out.println("3.Change password");
+            //System.out.println("3.Change password");
             System.out.println("0.EXIT. ");
 
             int opcion = InputOutput.get_int();
@@ -55,8 +64,6 @@ public class Menu {
                     break;
                 case 2:
                     login(socket);
-                case 3:
-                    changePassword();
                 case 0:
                     System.exit(0);
                     break;
@@ -157,8 +164,8 @@ public class Menu {
         MenuPatient(p, socket);
     }
 
-    // Check the type of the user and redirect her to the proper menu
-    private static void changePassword() {
+    
+    /*private static void changePassword() {
         sc = new Scanner(System.in);
         try {
             System.out.println("Email:");
@@ -182,7 +189,7 @@ public class Menu {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
+    }*/
 
     private static void MenuPatient(Patient p, Socket socket) throws Exception {
         sc = new Scanner(System.in);
