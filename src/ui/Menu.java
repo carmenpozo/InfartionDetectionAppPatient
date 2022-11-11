@@ -274,9 +274,10 @@ public class Menu {
                 nombre = nombre + ".txt";
             }
             fichero = new PrintWriter(new FileWriter(nombre), true);
-            fichero.print(java.time.LocalDateTime.now());
-            fichero.print(patient.getName());
-            fichero.print(patient.getSurname());
+            fichero.println(patient.getPatientId());
+            fichero.println(java.time.LocalDateTime.now());
+            fichero.println(patient.getName());
+            fichero.println(patient.getSurname());
             //read 10 samples
             for (int j = 0; j < 10; j++) {
 
