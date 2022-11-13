@@ -66,7 +66,7 @@ public class Client {
     }
 
     public void sendPatient(Patient pat, Socket socket) {
-
+        System.out.println("sendPatient");
         String patientSend = pat.toString();
         try {
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -76,7 +76,7 @@ public class Client {
         }
     }
 
-        public void sendLogin(String email ,String password, Socket socket) {
+    public void sendLogin(String email, String password, Socket socket) {
 
         try {
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -86,47 +86,47 @@ public class Client {
             ex.printStackTrace();
         }
     }
-        
-    public void sendOption(Socket socket, int id, int option){
+
+    public void sendOption(Socket socket, int id, int option) {
+        OutputStream outputStream = null;
+        System.out.println("Send opt");
+        try {
+            outputStream = socket.getOutputStream();
+
+            //And send it to the server
+            outputStream.write(option);
+            outputStream.write(id);
+            outputStream.flush();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void sendOpt(Socket socket, int option) {
         OutputStream outputStream = null;
         try {
             outputStream = socket.getOutputStream();
-            while (true) {
-                //And send it to the server
-                outputStream.write(option);
-                outputStream.write(id);
-                   
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+
+            //And send it to the server
+            outputStream.write(option);
+            outputStream.flush();
             try {
-                outputStream.close();
-            } catch (IOException ex) {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-    }
-    
-        public void sendOpt(Socket socket, int option){
-        OutputStream outputStream = null;
-        try {
-            outputStream = socket.getOutputStream();
-            while (true) {
-                //And send it to the server
-                outputStream.write(option);
-                   
-            }
+
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                outputStream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
+
     public List receivePatient(Socket socket) {
 
         BufferedReader bufferedReader = null;
@@ -142,13 +142,13 @@ public class Client {
             return atributes;
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
         return atributes;
 
     }
 
     public List<String> receiveFilesNames(Socket socket) {
-       BufferedReader bufferedReader = null;
+        BufferedReader bufferedReader = null;
         List<String> names = null;
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -161,7 +161,7 @@ public class Client {
             return names;
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
         return names;
 
     }
