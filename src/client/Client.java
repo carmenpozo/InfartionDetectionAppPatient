@@ -67,7 +67,7 @@ public class Client {
 
     public void sendPatient(Patient pat, Socket socket) {
         System.out.println("sendPatient");
-        String patientSend = pat.toString();
+        String patientSend = pat.toString2();
         try {
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
             printWriter.println(patientSend);
