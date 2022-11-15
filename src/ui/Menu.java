@@ -64,6 +64,7 @@ public class Menu {
                     break;
                 case 2:
                     login(socket);
+                    break;
                 case 0:
                     System.exit(0);
                     break;
@@ -145,6 +146,7 @@ public class Menu {
         
         client.sendOpt(socket, 4);
         client.sendPatient(p, socket);
+        System.out.print("\nAccount created.\n");
     }
 
     private static void login(Socket socket) throws Exception {
@@ -155,13 +157,17 @@ public class Menu {
         // Ask the user for a password
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
+        //MessageDigest md = MessageDigest.getInstance("MD5");
+	//md.update(password.getBytes());
+	//byte[] pw = md.digest();
     
         client.sendOpt(socket, 5);
         client.sendLogin(email, password, socket);
-        List pat = client.receivePatient(socket);
-        Patient p = null;
-        p.setPatientId((Integer) pat.get(0));
-        MenuPatient(p, socket);
+        //List pat = client.receivePatient(socket);   
+        int id = Integer.parseInt(client.receivepatientId(socket));
+        //Patient p = new Patient(id,email,pw);
+        //p.setPatientId((Integer) pat.get(0));
+        MenuPatient(id, socket);
     }
 
     
@@ -191,7 +197,7 @@ public class Menu {
         }
     }*/
 
-    private static void MenuPatient(Patient p, Socket socket) throws Exception {
+    private static void MenuPatient(int id, Socket socket) throws Exception {
         sc = new Scanner(System.in);
         while (true) {
             System.out.println("\n1.View my information. ");
@@ -203,14 +209,14 @@ public class Menu {
             int opcion = InputOutput.get_int();
             switch (opcion) {
                 case 1: {
-                    ViewInfo(socket, p);
+                    ViewInfo(socket, id);
                     break;
                 }
                 case 2:
-                    PatientFiles(socket, p);
+                    PatientFiles(socket, id);
                     break;
                 case 3:
-                    addECG(socket, p);
+                    //addECG(socket, p);
                     break;
                 case 0:
                     Menu.menuPrinicpal();
@@ -223,16 +229,16 @@ public class Menu {
 
     }
 
-    private static void ViewInfo(Socket socket, Patient p) {
-        int id = p.getPatientId();
+    private static void ViewInfo(Socket socket, int id) {
+        //int id = p.getPatientId();
         client.sendOption(socket, id, 1);
         List information = client.receivePatient(socket);
         System.out.println(information);
 
     }
 
-    private static void PatientFiles(Socket socket, Patient p) {
-        int id = p.getPatientId();
+    private static void PatientFiles(Socket socket, int id) {
+        //int id = p.getPatientId();
         client.sendOption(socket, id, 2);
         List names = client.receiveFilesNames(socket);
         System.out.println(names);
@@ -241,7 +247,7 @@ public class Menu {
 
     public static Frame[] frame;
 
-    private static void addECG(Socket socket,Patient patient) {
+    private static void addECG(Socket socket, Patient p) {
         BITalino bitalino = null;
         try {
             bitalino = new BITalino();
@@ -266,10 +272,10 @@ public class Menu {
                 nombre = nombre + ".txt";
             }
             fichero = new PrintWriter(new FileWriter(nombre), true);
-            fichero.println(patient.getPatientId());
+            //fichero.println(patient.getPatientId());
             fichero.println(java.time.LocalDateTime.now());
-            fichero.println(patient.getName());
-            fichero.println(patient.getSurname());
+            //fichero.println(patient.getName());
+            //fichero.println(patient.getSurname());
             //read 10 samples
             for (int j = 0; j < 10; j++) {
 
@@ -312,3 +318,4 @@ public class Menu {
 
 
 }
+

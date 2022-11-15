@@ -89,7 +89,7 @@ public class Client {
 
     public void sendOption(Socket socket, int id, int option) {
         OutputStream outputStream = null;
-        System.out.println("Send opt");
+        //System.out.println("Send opt");
         try {
             outputStream = socket.getOutputStream();
 
@@ -147,6 +147,19 @@ public class Client {
         }
         return atributes;
 
+    }
+    
+    public String receivepatientId(Socket socket){
+        BufferedReader bufferedReader = null;
+        String id = null;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            id = bufferedReader.readLine();
+        }
+        catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return id;       
     }
 
     public List<String> receiveFilesNames(Socket socket) {
