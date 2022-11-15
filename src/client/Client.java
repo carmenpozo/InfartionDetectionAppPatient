@@ -111,10 +111,12 @@ public class Client {
     public void sendOpt(Socket socket, int option) {
         OutputStream outputStream = null;
         try {
+            
             outputStream = socket.getOutputStream();
 
             //And send it to the server
             outputStream.write(option);
+            System.out.println(option);
             outputStream.flush();
             try {
                 Thread.sleep(1);

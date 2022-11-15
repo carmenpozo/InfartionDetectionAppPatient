@@ -156,7 +156,7 @@ public class Menu {
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
     
-        client.sendOpt(socket, 4);
+        client.sendOpt(socket, 5);
         client.sendLogin(email, password, socket);
         List pat = client.receivePatient(socket);
         Patient p = null;
