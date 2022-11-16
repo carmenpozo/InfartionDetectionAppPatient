@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -111,7 +112,7 @@ public class Client {
     public void sendOpt(Socket socket, int option) {
         OutputStream outputStream = null;
         try {
-            
+
             outputStream = socket.getOutputStream();
 
             //And send it to the server
@@ -148,18 +149,14 @@ public class Client {
         return atributes;
 
     }
-    
-    public String receivepatientId(Socket socket){
-        BufferedReader bufferedReader = null;
-        String id = null;
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            id = bufferedReader.readLine();
-        }
-        catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return id;       
+
+    public int receivepatientId(Socket socket) throws IOException {
+        //BufferedReader bufferedReader = null;
+        int id;
+        InputStream inputstream = socket.getInputStream();
+        //bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        id = inputstream.read();
+        return id;
     }
 
     public List<String> receiveFilesNames(Socket socket) {

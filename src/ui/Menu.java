@@ -164,7 +164,8 @@ public class Menu {
         client.sendOpt(socket, 5);
         client.sendLogin(email, password, socket);
         //List pat = client.receivePatient(socket);   
-        int id = Integer.parseInt(client.receivepatientId(socket));
+        int id = client.receivepatientId(socket);
+        System.out.println("Patient id: " + id);
         //Patient p = new Patient(id,email,pw);
         //p.setPatientId((Integer) pat.get(0));
         MenuPatient(id, socket);
