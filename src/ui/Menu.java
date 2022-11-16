@@ -10,6 +10,7 @@ import BITalino.BITalinoException;
 import BITalino.Frame;
 import client.Client;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.MessageDigest;
@@ -163,8 +164,9 @@ public class Menu {
     
         client.sendOpt(socket, 5);
         client.sendLogin(email, password, socket);
-        //List pat = client.receivePatient(socket);   
-        int id = client.receivepatientId(socket);
+        //List pat = client.receivePatient(socket); 
+        int id = 2;
+        //int id = client.receivepatientId(socket);
         System.out.println("Patient id: " + id);
         //Patient p = new Patient(id,email,pw);
         //p.setPatientId((Integer) pat.get(0));
@@ -210,6 +212,7 @@ public class Menu {
             int opcion = InputOutput.get_int();
             switch (opcion) {
                 case 1: {
+                    System.out.println("ok");
                     ViewInfo(socket, id);
                     break;
                 }
@@ -230,11 +233,18 @@ public class Menu {
 
     }
 
-    private static void ViewInfo(Socket socket, int id) {
+    private static void ViewInfo(Socket socket, int id){
         //int id = p.getPatientId();
         client.sendOption(socket, id, 1);
-        List information = client.receivePatient(socket);
-        System.out.println(information);
+        //List information = client.receivePatient(socket);
+        try{
+            Patient p = client.receivePatient(socket);
+            System.out.println(p);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
+        
 
     }
 

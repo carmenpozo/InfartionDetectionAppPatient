@@ -14,6 +14,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,8 +133,37 @@ public class Client {
         }
     }
 
-    public List receivePatient(Socket socket) {
+    public Patient receivePatient(Socket socket) throws IOException{
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+        //int id = bufferedReader.read();
+        int id = Integer.parseInt(bufferedReader.readLine());
+        System.out.println("id:" + id);
+        String name = bufferedReader.readLine();
+        System.out.println(name);
+        String surname = bufferedReader.readLine();
+        System.out.println(surname);
+        String gender = bufferedReader.readLine();
+        System.out.println(gender);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-DD");
+        LocalDate d = LocalDate.parse(bufferedReader.readLine(), formatter);
+        Date birthDate = Date.valueOf(d);//Date.valueOf(bufferedReader.readLine());
+        System.out.println(birthDate);
+        String bloodType = bufferedReader.readLine();
+        String email = bufferedReader.readLine();
+        byte[] password = bufferedReader.readLine().getBytes();
+        System.out.println(password);
+        String symptoms = bufferedReader.readLine();
+        System.out.println(symptoms);
+        String bitalino = bufferedReader.readLine();
+        System.out.println(bitalino);
+
+        Patient patient = new Patient(id, name, surname, gender, birthDate, bloodType, email, password, symptoms, bitalino);
+        System.out.println(patient);
+        return patient;
+        
+       /* System.out.println("okok");
         BufferedReader bufferedReader = null;
         List<String> atributes = null;
         try {
@@ -139,14 +171,16 @@ public class Client {
             String line;
             atributes = new ArrayList();
             while ((line = bufferedReader.readLine()) != null) {
-
+                System.out.println(line);
                 atributes.add(line);
             }
+            System.out.println(atributes);
             return atributes;
+            
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return atributes;
+        return atributes;*/
 
     }
 
