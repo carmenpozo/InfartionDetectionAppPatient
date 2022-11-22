@@ -6,6 +6,8 @@
 package client;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -85,6 +87,8 @@ public class Client {
         try {
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
             printWriter.println(email);
+            //DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            //dataOutputStream.writeBytes(password);
             printWriter.println(password);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -188,8 +192,9 @@ public class Client {
         //BufferedReader bufferedReader = null;
         int id;
         InputStream inputstream = socket.getInputStream();
+        DataInputStream dis = new DataInputStream(inputstream);
         //bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        id = inputstream.read();
+        id = dis.readInt();
         return id;
     }
 
