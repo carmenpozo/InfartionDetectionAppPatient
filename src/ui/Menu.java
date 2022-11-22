@@ -160,6 +160,7 @@ public class Menu {
         // Ask the user for a password
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
+        System.out.println("password: "+password);
         //MessageDigest md = MessageDigest.getInstance("MD5");
 	//md.update(password.getBytes());
 	//byte[] pw = md.digest();
