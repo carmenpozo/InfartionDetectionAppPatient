@@ -67,6 +67,8 @@ public class Menu {
                     login(socket);
                     break;
                 case 0:
+                    client.sendOpt(socket, 6);
+                    client.exit();
                     System.exit(0);
                     break;
                 default:

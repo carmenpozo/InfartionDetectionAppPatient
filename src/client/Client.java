@@ -32,8 +32,10 @@ import pojos.Patient;
  */
 public class Client {
 
+    Socket socket;
+
     public Socket ConnectionWithServer(String ip) {
-        Socket socket = new Socket();
+        socket = new Socket();
         try {
             socket = new Socket(ip, 9000);
         } catch (IOException ex) {
@@ -43,7 +45,6 @@ public class Client {
     }
 
     public void sendFileBitalino(String filename, Socket socket) {
-
         try {
             OutputStream outputStream = socket.getOutputStream();
 
@@ -64,7 +65,7 @@ public class Client {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
+            br.close();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -137,7 +138,7 @@ public class Client {
         }
     }
 
-    public Patient receivePatient(Socket socket) throws IOException{
+    public Patient receivePatient(Socket socket) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         //int id = bufferedReader.read();
@@ -150,9 +151,9 @@ public class Client {
         String gender = bufferedReader.readLine();
         System.out.println(gender);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-DD");
-        LocalDate d = LocalDate.parse(bufferedReader.readLine(), formatter);
-        Date birthDate = Date.valueOf(d);//Date.valueOf(bufferedReader.readLine());
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-DD");
+        //LocalDate d = LocalDate.parse(bufferedReader.readLine(), formatter);
+        Date birthDate = Date.valueOf(bufferedReader.readLine());//Date.valueOf(d);//Date.valueOf(bufferedReader.readLine());
         System.out.println(birthDate);
         String bloodType = bufferedReader.readLine();
         String email = bufferedReader.readLine();
@@ -165,9 +166,11 @@ public class Client {
 
         Patient patient = new Patient(id, name, surname, gender, birthDate, bloodType, email, password, symptoms, bitalino);
         System.out.println(patient);
-        return patient;
         
-       /* System.out.println("okok");
+        bufferedReader.close();
+        return patient;
+
+        /* System.out.println("okok");
         BufferedReader bufferedReader = null;
         List<String> atributes = null;
         try {
@@ -236,12 +239,12 @@ public class Client {
         }
     }
 
-    private static void releaseResources(BufferedReader bufferedReader, Socket socket) {
-        try {
-            bufferedReader.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void exit() {
+        releaseResources( socket);
+    }
+
+    private static void releaseResources( Socket socket) {
+
 
         try {
             socket.close();
