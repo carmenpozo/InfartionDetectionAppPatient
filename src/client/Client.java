@@ -158,13 +158,14 @@ public class Client {
         String bloodType = bufferedReader.readLine();
         String email = bufferedReader.readLine();
         byte[] password = bufferedReader.readLine().getBytes();
-        System.out.println(password);
+        String pw2 = new String(password, 0, password.length);
+        System.out.println(pw2);
         String symptoms = bufferedReader.readLine();
         System.out.println(symptoms);
         String bitalino = bufferedReader.readLine();
         System.out.println(bitalino);
 
-        Patient patient = new Patient(id, name, surname, gender, birthDate, bloodType, email, password, symptoms, bitalino);
+        Patient patient = new Patient(id, name, surname, gender, birthDate, bloodType, email, pw2, symptoms, bitalino);
         System.out.println(patient);
         
         bufferedReader.close();

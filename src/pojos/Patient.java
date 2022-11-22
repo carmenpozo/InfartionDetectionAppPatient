@@ -25,11 +25,11 @@ public class Patient implements Serializable {
     private final Date birthDate;
     private final String bloodType;
     private final String email;
-    private byte[] password;
+    private String password;
     private String symptoms;
     private String bitalino;
 
-    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, byte[] password, String symptoms, String bitalino) {
+    public Patient(Integer patientId, String name, String surname, String gender, Date birthDate, String bloodType, String email, String password, String symptoms, String bitalino) {
         this.patientId = patientId;
         this.name = name;
         this.surname = surname;
@@ -43,7 +43,7 @@ public class Patient implements Serializable {
      
     }
     
-        public Patient(String name, String surname, String gender, Date birthDate, String bloodType, String email, byte[] password ,String symptoms, String bitalino) {
+        public Patient(String name, String surname, String gender, Date birthDate, String bloodType, String email, String password ,String symptoms, String bitalino) {
         this.name = name;
         this.surname = surname;
         this.gender = gender;
@@ -104,11 +104,11 @@ public class Patient implements Serializable {
     public String getEmail() {
         return email;
     }
-    public byte[] getPassword() {
+    public String getPassword() {
         return password;
     }
     
-    public void setPassword(byte[] password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -138,7 +138,7 @@ public class Patient implements Serializable {
         hash = 31 * hash + Objects.hashCode(this.birthDate);
         hash = 31 * hash + Objects.hashCode(this.bloodType);
         hash = 31 * hash + Objects.hashCode(this.email);
-        hash = 31 * hash + Arrays.hashCode(this.password);
+        hash = 31 * hash + Objects.hashCode(this.password);
         hash = 31 * hash + Objects.hashCode(this.symptoms);
         hash = 31 * hash + Objects.hashCode(this.bitalino);
         return hash;
@@ -183,7 +183,7 @@ public class Patient implements Serializable {
         if (!Objects.equals(this.birthDate, other.birthDate)) {
             return false;
         }
-        return Arrays.equals(this.password, other.password);
+        return Objects.equals(this.password, other.password);
     }
 
     @Override

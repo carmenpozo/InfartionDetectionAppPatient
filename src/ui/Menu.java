@@ -86,7 +86,8 @@ public class Menu {
         // Generate the hash
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(password.getBytes());
-        byte[] hash = md.digest();
+        byte[] hash2 = md.digest();
+        String hash =  new String(hash2, 0, hash2.length);
 
         System.out.println("Name: ");
         String name = InputOutput.get_String();
