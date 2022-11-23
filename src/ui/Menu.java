@@ -9,6 +9,7 @@ import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.Frame;
 import client.Client;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,6 +22,8 @@ import javax.bluetooth.RemoteDevice;
 import pojos.Patient;
 import java.util.Scanner;
 import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -42,13 +45,13 @@ public class Menu {
         System.out.println("Introduce the IP of the server you want to connect to: ");
         String ip = InputOutput.get_String();
         Socket socket = client.ConnectionWithServer(ip);
-        while (socket.getInetAddress() == null){
+        while (socket.getInetAddress() == null) {
             System.out.println("Error, the connection to the server failed. \n Introduce another IP: ");
             ip = InputOutput.get_String();
             socket = client.ConnectionWithServer(ip);
         }
         sc = new Scanner(System.in);
-        
+
         while (true) {
             System.out.println("\nWELCOME! ");
             System.out.println("\nChoose an option : ");
@@ -87,7 +90,7 @@ public class Menu {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(password.getBytes());
         byte[] hash2 = md.digest();
-        String hash =  new String(hash2, 0, hash2.length);
+        String hash = new String(hash2, 0, hash2.length);
 
         System.out.println("Name: ");
         String name = InputOutput.get_String();
@@ -147,7 +150,7 @@ public class Menu {
         String bitalino = InputOutput.get_String();
 
         Patient p = new Patient(name, surname, gender, birthdate, bt, email, hash, symptoms, bitalino);
-        
+
         client.sendOpt(socket, 4);
         client.sendPatient(p, socket);
         System.out.print("\nAccount created.\n");
@@ -161,11 +164,11 @@ public class Menu {
         // Ask the user for a password
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
-        System.out.println("password: "+password);
+        System.out.println("password: " + password);
         //MessageDigest md = MessageDigest.getInstance("MD5");
-	//md.update(password.getBytes());
-	//byte[] pw = md.digest();
-    
+        //md.update(password.getBytes());
+        //byte[] pw = md.digest();
+
         client.sendOpt(socket, 5);
         client.sendLogin(email, password, socket);
         //List pat = client.receivePatient(socket); 
@@ -176,7 +179,6 @@ public class Menu {
         MenuPatient(id, socket);
     }
 
-    
     /*private static void changePassword() {
         sc = new Scanner(System.in);
         try {
@@ -202,12 +204,11 @@ public class Menu {
             ex.printStackTrace();
         }
     }*/
-
     private static void MenuPatient(int id, Socket socket) throws Exception {
         sc = new Scanner(System.in);
         while (true) {
             System.out.println("\n1.View my information. ");
-            System.out.println("2.View my files ");
+            System.out.println("2.View my file names ");
             System.out.println("3.Perform a new Bitalino");
             System.out.println("0.Return ");
             System.out.println("\nChoose an option : ");
@@ -215,7 +216,6 @@ public class Menu {
             int opcion = InputOutput.get_int();
             switch (opcion) {
                 case 1: {
-                    System.out.println("ok");
                     ViewInfo(socket, id);
                     break;
                 }
@@ -223,7 +223,7 @@ public class Menu {
                     PatientFiles(socket, id);
                     break;
                 case 3:
-                    //addECG(socket, p);
+                    addECG(socket, id);
                     break;
                 case 0:
                     Menu.menuPrinicpal();
@@ -236,18 +236,16 @@ public class Menu {
 
     }
 
-    private static void ViewInfo(Socket socket, int id){
+    private static void ViewInfo(Socket socket, int id) {
         //int id = p.getPatientId();
         client.sendOption(socket, id, 1);
         //List information = client.receivePatient(socket);
-        try{
+        try {
             Patient p = client.receivePatient(socket);
             System.out.println(p);
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        
 
     }
 
@@ -261,7 +259,7 @@ public class Menu {
 
     public static Frame[] frame;
 
-    private static void addECG(Socket socket, Patient p) {
+    private static void addECG(Socket socket, int id) {
         BITalino bitalino = null;
         try {
             bitalino = new BITalino();
@@ -271,7 +269,11 @@ public class Menu {
             System.out.println(devices);
 
             //You need TO CHANGE THE MAC ADDRESS
-            String macAddress = "98:D3:91:FD:69:49";
+            client.sendOption(socket, id, 7);
+            String info = client.receivepatientFullNameandBitalino(socket);
+            String[] info2 = info.split("/");
+            String fullName = info2[0];
+            String macAddress = info2[1];
             int SamplingRate = 10;
             bitalino.open(macAddress, SamplingRate);
 
@@ -280,16 +282,20 @@ public class Menu {
             int[] channelsToAcquire = {1, 4};
             bitalino.start(channelsToAcquire);
             PrintWriter fichero = null;
+            LocalDateTime current = LocalDateTime.now();
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy.HH-mm-ss");
+            String formattedDateTime = current.format(format);
+            String userHome = System.getProperty("user.home");
+            // patients/<PATIENT_ID>/YYYYMMDD-HHMMSS_<PATIENT_ID>.txt
+            String path = "/patient" + id + "_" + formattedDateTime + ".txt";
+            File file = new File(userHome + path);
 
-            String nombre = InputOutput.getFilefromKeyboard();
-            if (!nombre.endsWith(".txt")) {
-                nombre = nombre + ".txt";
-            }
-            fichero = new PrintWriter(new FileWriter(nombre), true);
-            //fichero.println(patient.getPatientId());
-            fichero.println(java.time.LocalDateTime.now());
-            //fichero.println(patient.getName());
-            //fichero.println(patient.getSurname());
+            fichero = new PrintWriter(new FileWriter(file.getName()), true);
+            fichero.println(id);
+            fichero.println(formattedDateTime);
+            fichero.println(fullName);
+            
+
             //read 10 samples
             for (int j = 0; j < 10; j++) {
 
@@ -306,9 +312,10 @@ public class Menu {
                             + frame[i].analog[2] + " ");
 
                 }
+                System.out.println("File saved");
                 fichero.close();
-                client.sendOpt(socket,3);
-                client.sendFileBitalino(nombre, socket);
+                client.sendOpt(socket, 3);
+                client.sendFileBitalino(file.getName(), socket);
             }
             //stop acquisition
             bitalino.stop();
@@ -322,7 +329,7 @@ public class Menu {
                 if (bitalino != null) {
                     bitalino.close();
                 }
-                
+
             } catch (BITalinoException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -330,6 +337,4 @@ public class Menu {
 
     }
 
-
 }
-

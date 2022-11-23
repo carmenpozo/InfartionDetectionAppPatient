@@ -49,7 +49,7 @@ public class Client {
             OutputStream outputStream = socket.getOutputStream();
 
             //File To Read from Bitalino
-            File file = new File("filename"); // pedir file path
+            File file = new File(filename); 
             BufferedReader br = new BufferedReader(new FileReader(file));
             PrintWriter printWriter = new PrintWriter(outputStream, true);
             String line;
@@ -150,10 +150,7 @@ public class Client {
         System.out.println(surname);
         String gender = bufferedReader.readLine();
         System.out.println(gender);
-
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-DD");
-        //LocalDate d = LocalDate.parse(bufferedReader.readLine(), formatter);
-        Date birthDate = Date.valueOf(bufferedReader.readLine());//Date.valueOf(d);//Date.valueOf(bufferedReader.readLine());
+        Date birthDate = Date.valueOf(bufferedReader.readLine());
         System.out.println(birthDate);
         String bloodType = bufferedReader.readLine();
         String email = bufferedReader.readLine();
@@ -170,28 +167,9 @@ public class Client {
         
         bufferedReader.close();
         return patient;
-
-        /* System.out.println("okok");
-        BufferedReader bufferedReader = null;
-        List<String> atributes = null;
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String line;
-            atributes = new ArrayList();
-            while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
-                atributes.add(line);
-            }
-            System.out.println(atributes);
-            return atributes;
-            
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return atributes;*/
-
     }
 
+    
     public int receivepatientId(Socket socket) throws IOException {
         //BufferedReader bufferedReader = null;
         int id;
@@ -200,6 +178,17 @@ public class Client {
         //bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         id = dis.readInt();
         return id;
+    }
+    
+     public String receivepatientFullNameandBitalino(Socket socket) throws IOException {
+       BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+       String fullName = bufferedReader.readLine();
+       String bitalino = bufferedReader.readLine();
+       System.out.println(fullName);
+       System.out.println(bitalino);
+       String info = fullName + "/" + bitalino;
+       bufferedReader.close();
+       return info;
     }
 
     public List<String> receiveFilesNames(Socket socket) {
