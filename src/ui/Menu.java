@@ -285,16 +285,13 @@ public class Menu {
             LocalDateTime current = LocalDateTime.now();
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy.HH-mm-ss");
             String formattedDateTime = current.format(format);
-            String userHome = System.getProperty("user.home");
-            // patients/<PATIENT_ID>/YYYYMMDD-HHMMSS_<PATIENT_ID>.txt
-            String path = "/patient" + id + "_" + formattedDateTime + ".txt";
-            File file = new File(userHome + path);
 
-            fichero = new PrintWriter(new FileWriter(file.getName()), true);
+            File file = new File("files\\patient" + id + "_" + formattedDateTime + ".txt");
+            fichero = new PrintWriter(new FileWriter(file), true);
+
             fichero.println(id);
             fichero.println(formattedDateTime);
             fichero.println(fullName);
-            
 
             //read 10 samples
             for (int j = 0; j < 10; j++) {
@@ -312,11 +309,12 @@ public class Menu {
                             + frame[i].analog[2] + " ");
 
                 }
-                System.out.println("File saved");
                 fichero.close();
-                client.sendOpt(socket, 3);
-                client.sendFileBitalino(file.getName(), socket);
             }
+            System.out.println("File saved");
+
+            client.sendOpt(socket, 3);
+            client.sendFileBitalino(file, socket);
             //stop acquisition
             bitalino.stop();
         } catch (BITalinoException ex) {

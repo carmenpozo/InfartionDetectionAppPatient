@@ -44,12 +44,12 @@ public class Client {
         return socket;
     }
 
-    public void sendFileBitalino(String filename, Socket socket) {
+    public void sendFileBitalino(File file, Socket socket) {
         try {
             OutputStream outputStream = socket.getOutputStream();
 
             //File To Read from Bitalino
-            File file = new File(filename); 
+            //File file = new File(filename); 
             BufferedReader br = new BufferedReader(new FileReader(file));
             PrintWriter printWriter = new PrintWriter(outputStream, true);
             String line;
@@ -187,7 +187,7 @@ public class Client {
        System.out.println(fullName);
        System.out.println(bitalino);
        String info = fullName + "/" + bitalino;
-       bufferedReader.close();
+       //bufferedReader.close();
        return info;
     }
 
