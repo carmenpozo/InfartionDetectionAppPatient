@@ -120,12 +120,9 @@ public class Client {
     public void sendOpt(Socket socket, int option) {
         OutputStream outputStream = null;
         try {
-
             outputStream = socket.getOutputStream();
-
             //And send it to the server
             outputStream.write(option);
-            System.out.println(option);
             outputStream.flush();
             try {
                 Thread.sleep(1);
@@ -164,12 +161,11 @@ public class Client {
 
         Patient patient = new Patient(id, name, surname, gender, birthDate, bloodType, email, pw2, symptoms, bitalino);
         System.out.println(patient);
-        
+
         bufferedReader.close();
         return patient;
     }
 
-    
     public int receivepatientId(Socket socket) throws IOException {
         //BufferedReader bufferedReader = null;
         int id;
@@ -179,28 +175,28 @@ public class Client {
         id = dis.readInt();
         return id;
     }
-    
-     public String receivepatientFullNameandBitalino(Socket socket) throws IOException {
-       BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-       String fullName = bufferedReader.readLine();
-       String bitalino = bufferedReader.readLine();
-       System.out.println(fullName);
-       System.out.println(bitalino);
-       String info = fullName + "/" + bitalino;
-       //bufferedReader.close();
-       return info;
+
+    public String receivepatientFullNameandBitalino(Socket socket) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String fullName = bufferedReader.readLine();
+        String bitalino = bufferedReader.readLine();
+        System.out.println(fullName);
+        System.out.println(bitalino);
+        String info = fullName + "/" + bitalino;
+        //bufferedReader.close();
+        return info;
     }
 
-    public String receiveFilesNames(Socket socket) throws IOException{
+    public String receiveFilesNames(Socket socket) throws IOException {
         String names = "";
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String line;
         //while ((line = bufferedReader.readLine()) != null) {
-        for(int i = 0; i<7; i++){
+        for (int i = 0; i < 7; i++) {
             line = bufferedReader.readLine();
             System.out.println(line);
             //names = names + "\n" + line;
-            
+
         }
         //System.out.println("patient's files: " + names);
         return names;
@@ -226,17 +222,33 @@ public class Client {
     }
 
     public void exit() {
-        releaseResources( socket);
+        releaseResources(socket);
     }
 
-    private static void releaseResources( Socket socket) {
-
+    private static void releaseResources(Socket socket) {
 
         try {
             socket.close();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void sendEmail(Socket socket, String email) {
+        PrintWriter printWriter;
+        try {
+            printWriter = new PrintWriter(socket.getOutputStream(), true);
+            printWriter.println(email);
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public String receiveCheck(Socket socket) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String checkEmail = bufferedReader.readLine();
+        return checkEmail;
     }
 
 }

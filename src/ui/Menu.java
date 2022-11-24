@@ -38,10 +38,6 @@ public class Menu {
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) throws Exception {
-        menuPrinicpal();
-    }
-
-    public static void menuPrinicpal() throws Exception {
         System.out.println("Introduce the IP of the server you want to connect to: ");
         String ip = InputOutput.get_String();
         Socket socket = client.ConnectionWithServer(ip);
@@ -50,10 +46,9 @@ public class Menu {
             ip = InputOutput.get_String();
             socket = client.ConnectionWithServer(ip);
         }
-        sc = new Scanner(System.in);
-
         while (true) {
-            System.out.println("\nWELCOME! ");
+            sc = new Scanner(System.in);
+            System.out.println("\nWelcome to the Infaction Detection Application ");
             System.out.println("\nChoose an option : ");
             System.out.println("1.Register ");
             System.out.println("2.Log in");
@@ -84,6 +79,13 @@ public class Menu {
         System.out.println("--- NEW ACCOUNT ---");
         System.out.println("Enter your email address:");
         String email = InputOutput.get_String();
+        client.sendOpt(socket, 8);
+        client.sendEmail(socket, email);
+        String checkEmail = client.receiveCheck(socket);
+        if (!checkEmail.equals("")) {
+            System.out.println("The email introduced is already registered. \n");
+            return;
+        }
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
         // Generate the hash
@@ -160,7 +162,13 @@ public class Menu {
         // Ask the user for an email
         System.out.println("Enter your email address: ");
         String email = InputOutput.get_String();
-
+        client.sendOpt(socket, 8);
+        client.sendEmail(socket, email);
+        String checkEmail = client.receiveCheck(socket);
+        if (checkEmail.equals("")) {
+            System.out.println("The email introduced is not registered. \n");
+            return;
+        }
         // Ask the user for a password
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
@@ -173,7 +181,10 @@ public class Menu {
         client.sendLogin(email, password, socket);
         //List pat = client.receivePatient(socket); 
         int id = client.receivepatientId(socket);
-        System.out.println("Patient id: " + id);
+        if (id == 0) {
+            System.out.println("Wrong password.\n");
+            return;
+        }
         //Patient p = new Patient(id,email,pw);
         //p.setPatientId((Integer) pat.get(0));
         MenuPatient(id, socket);
@@ -226,8 +237,7 @@ public class Menu {
                     addECG(socket, id);
                     break;
                 case 0:
-                    Menu.menuPrinicpal();
-                    break;
+                    return;
                 default:
                     break;
             }
