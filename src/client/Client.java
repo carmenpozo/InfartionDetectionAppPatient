@@ -191,23 +191,19 @@ public class Client {
        return info;
     }
 
-    public List<String> receiveFilesNames(Socket socket) {
-        BufferedReader bufferedReader = null;
-        List<String> names = null;
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String line;
-            names = new ArrayList();
-            while ((line = bufferedReader.readLine()) != null) {
-
-                names.add(line);
-            }
-            return names;
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+    public String receiveFilesNames(Socket socket) throws IOException{
+        String names = "";
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String line;
+        //while ((line = bufferedReader.readLine()) != null) {
+        for(int i = 0; i<7; i++){
+            line = bufferedReader.readLine();
+            System.out.println(line);
+            //names = names + "\n" + line;
+            
         }
+        //System.out.println("patient's files: " + names);
         return names;
-
     }
 
     private static void releaseResources(PrintWriter printWriter,

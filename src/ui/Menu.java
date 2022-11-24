@@ -249,11 +249,12 @@ public class Menu {
 
     }
 
-    private static void PatientFiles(Socket socket, int id) {
+    private static void PatientFiles(Socket socket, int id) throws IOException {
         //int id = p.getPatientId();
         client.sendOption(socket, id, 2);
-        List names = client.receiveFilesNames(socket);
-        System.out.println(names);
+        System.out.println("option see files selected");
+        String names = client.receiveFilesNames(socket);
+        System.out.println("patients' files: " + names);
 
     }
 
