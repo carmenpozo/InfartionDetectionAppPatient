@@ -145,9 +145,10 @@ public class Menu {
             System.out.print("Introduce a valid bloodtype (A, B, AB, O):  ");
             bt = InputOutput.get_String();
         }
-
-        System.out.println("Symptoms: ");
-        String symptoms = InputOutput.get_String();
+        System.out.println("----SYMPTOMS----\n");
+        System.out.println("If you have any of this symptoms, introduce an x. \n");
+        String symptoms = getSymptoms();
+        
         System.out.println("MAC BITalino: ");
         String bitalino = InputOutput.get_String();
 
@@ -344,6 +345,54 @@ public class Menu {
             }
         }
 
+    }
+
+    private static String getSymptoms() {
+        String chestpain = "";
+        String fatigue = "";
+        String dizziness = "";
+        String sofbreath = "";
+        String naussea = "";
+        String vomits = "";
+        String otherpains = "";
+        System.out.println("Chest Pain : \n");
+        String text = InputOutput.get_String();
+        if (text.equals("x")) {
+            chestpain = "chest pain, ";
+        }
+        System.out.println("Fatigue : \n");
+        text = InputOutput.get_String();
+        if (text.equals("x")) {
+            fatigue = "fatigue, ";
+        }
+        System.out.println("Dizziness : \n");
+        text = InputOutput.get_String();
+        if (text.equals("x")) {
+            dizziness = "dizziness, ";
+        }
+        System.out.println("Shortness of breath : \n");
+        text = InputOutput.get_String();
+        if (text.equals("x")) {
+            sofbreath = "shortness of breath, ";
+        }
+        System.out.println("Naussea : \n");
+        text = InputOutput.get_String();
+        if (text.equals("x")) {
+            naussea = "naussea, ";
+        }
+        System.out.println("Vomits : \n");
+        text = InputOutput.get_String();
+        if (text.equals("x")) {
+            vomits = "vomits, ";
+        }
+        System.out.println("Other pains (jaw, neck, arm, back) : \n");
+        text = InputOutput.get_String();
+        if (text.equals("x")) {
+            otherpains = "otherpains";
+        }
+        String symptoms = chestpain + fatigue + dizziness + sofbreath + naussea +vomits +otherpains;
+        return symptoms;
+        
     }
 
 }
