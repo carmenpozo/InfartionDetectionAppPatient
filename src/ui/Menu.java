@@ -9,7 +9,9 @@ import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.Frame;
 import client.Client;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,6 +26,8 @@ import java.util.Scanner;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -48,7 +52,7 @@ public class Menu {
         }
         while (true) {
             sc = new Scanner(System.in);
-            System.out.println("\nWelcome to the Infaction Detection Application ");
+            System.out.println("\nWelcome to the Infarction Detection Application ");
             System.out.println("\nChoose an option : ");
             System.out.println("1.Register ");
             System.out.println("2.Log in");
@@ -148,7 +152,7 @@ public class Menu {
         System.out.println("----SYMPTOMS----\n");
         System.out.println("If you have any of this symptoms, introduce an x. \n");
         String symptoms = getSymptoms();
-        
+
         System.out.println("MAC BITalino: ");
         String bitalino = InputOutput.get_String();
 
@@ -265,8 +269,23 @@ public class Menu {
         client.sendOption(socket, id, 2);
         System.out.println("option see files selected");
         String names = client.receiveFilesNames(socket);
-        System.out.println("patients' files: " + names);
+        //System.out.println("patients' files: " + names);
+        String[] parts = names.split("//");
+        List<String> files = new ArrayList();
+        files = Arrays.asList(parts);
 
+        for (int i = 0; i < files.size(); i++) {
+            System.out.println("File " + (i + 1) + ": " + files.get(i));
+        }
+        System.out.println("Choose the file number you want to see:");
+        int num = InputOutput.get_int();
+        String name = files.get(num - 1);
+        File file = new File("files\\" + name);
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+        }
     }
 
     public static Frame[] frame;
@@ -390,9 +409,9 @@ public class Menu {
         if (text.equals("x")) {
             otherpains = "otherpains";
         }
-        String symptoms = chestpain + fatigue + dizziness + sofbreath + naussea +vomits +otherpains;
+        String symptoms = chestpain + fatigue + dizziness + sofbreath + naussea + vomits + otherpains;
         return symptoms;
-        
+
     }
 
 }

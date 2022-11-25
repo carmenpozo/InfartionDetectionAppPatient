@@ -191,11 +191,11 @@ public class Client {
         String names = "";
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String line;
-        //while ((line = bufferedReader.readLine()) != null) {
-        for (int i = 0; i < 7; i++) {
+       //while ((line = bufferedReader.readLine())!= null) {
+       for (int i = 0; i < 4; i++) {
             line = bufferedReader.readLine();
-            System.out.println(line);
-            //names = names + "\n" + line;
+            //System.out.println(line);
+            names = line + "//" + names;
 
         }
         //System.out.println("patient's files: " + names);
