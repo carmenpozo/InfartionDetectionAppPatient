@@ -195,31 +195,7 @@ public class Menu {
         MenuPatient(id, socket);
     }
 
-    /*private static void changePassword() {
-        sc = new Scanner(System.in);
-        try {
-            System.out.println("Email:");
-            String email = InputOutput.get_String();
-            System.out.println("Password:");
-            String password = InputOutput.get_String();
-            Patient patient = pm.checkPassword(email, password);
-            System.out.println("Introduce the new password: ");
-            String newPassword1 = InputOutput.get_String();
-            System.out.println("Confirm your new password: ");
-            String newPassword2 = InputOutput.get_String();
-            if (newPassword1.equals(newPassword2)) {
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                md.update(newPassword1.getBytes());
-                byte[] hash = md.digest();
-                pm.UpdatePatient(patient, hash);
-                System.out.println("Password updated");
-            } else {
-                System.out.println("The passwords don't match");
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }*/
+ 
     private static void MenuPatient(int id, Socket socket) throws Exception {
         sc = new Scanner(System.in);
         while (true) {
@@ -257,7 +233,7 @@ public class Menu {
         //List information = client.receivePatient(socket);
         try {
             Patient p = client.receivePatient(socket);
-            System.out.println(p);
+            System.out.println(p.toString3());
         } catch (IOException e) {
             e.printStackTrace();
         }

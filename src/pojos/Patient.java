@@ -199,6 +199,10 @@ public class Patient implements Serializable {
     }
 
     
+     public String toString3() {
+        return  "Patient "+ patientId + ":"+ "\n" + "Name: "+ name + "\n" + "Surname: "+surname + "\n" + "Gender: "+ gender + "\n" + "Birth Date: "+ birthDate + "\n" + "Blood Type: "+ bloodType + 
+                "\n" + "Email: "+ email + "\n" + "Symptoms: "+ symptoms + "\n" + "Bitalino Mac Adress: "+ bitalino ;
+    }
     
 
 
