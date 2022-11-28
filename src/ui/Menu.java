@@ -71,6 +71,7 @@ public class Menu {
                 case 0:
                     client.sendOpt(socket, 6);
                     client.exit();
+                    System.out.println("Connection with the server succesfully closed");
                     System.exit(0);
                     break;
                 default:
