@@ -36,8 +36,6 @@ import java.util.List;
  */
 public class Menu {
 
-    // private static JPAUserManager paman = new JPAUserManager();
-    // private static JDBCUserManager dbman = new JDBCUserManager();
     private static Client client = new Client();
     static Scanner sc = new Scanner(System.in);
 
@@ -93,7 +91,6 @@ public class Menu {
         }
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
-        // Generate the hash
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(password.getBytes());
         byte[] hash2 = md.digest();
@@ -179,24 +176,18 @@ public class Menu {
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
         System.out.println("password: " + password);
-        //MessageDigest md = MessageDigest.getInstance("MD5");
-        //md.update(password.getBytes());
-        //byte[] pw = md.digest();
 
         client.sendOpt(socket, 5);
         client.sendLogin(email, password, socket);
-        //List pat = client.receivePatient(socket); 
         int id = client.receivepatientId(socket);
         if (id == 0) {
             System.out.println("Wrong password.\n");
             return;
         }
-        //Patient p = new Patient(id,email,pw);
-        //p.setPatientId((Integer) pat.get(0));
+
         MenuPatient(id, socket);
     }
 
- 
     private static void MenuPatient(int id, Socket socket) throws Exception {
         sc = new Scanner(System.in);
         while (true) {
@@ -229,9 +220,9 @@ public class Menu {
     }
 
     private static void ViewInfo(Socket socket, int id) {
-        //int id = p.getPatientId();
+
         client.sendOption(socket, id, 1);
-        //List information = client.receivePatient(socket);
+
         try {
             Patient p = client.receivePatient(socket);
             System.out.println(p.toString3());
@@ -242,11 +233,11 @@ public class Menu {
     }
 
     private static void PatientFiles(Socket socket, int id) throws IOException {
-        //int id = p.getPatientId();
+
         client.sendOption(socket, id, 2);
         System.out.println("option see files selected");
         String names = client.receiveFilesNames(socket);
-        //System.out.println("patients' files: " + names);
+
         String[] parts = names.split("//");
         List<String> files = new ArrayList();
         files = Arrays.asList(parts);
@@ -271,12 +262,10 @@ public class Menu {
         BITalino bitalino = null;
         try {
             bitalino = new BITalino();
-            // find devices
-            //Only works on some OS
+
             Vector<RemoteDevice> devices = bitalino.findDevices();
             System.out.println(devices);
 
-            //You need TO CHANGE THE MAC ADDRESS
             client.sendOption(socket, id, 7);
             String info = client.receivepatientFullNameandBitalino(socket);
             String[] info2 = info.split("/");
@@ -285,8 +274,6 @@ public class Menu {
             int SamplingRate = 10;
             bitalino.open(macAddress, SamplingRate);
 
-            // start acquisition on analog channels A2 and A6
-            //If you want A1, A3 and A4 you should use {0,2,3}
             int[] channelsToAcquire = {1, 4};
             bitalino.start(channelsToAcquire);
             PrintWriter fichero = null;
@@ -302,11 +289,13 @@ public class Menu {
             fichero.println(fullName);
 
             //read 10 samples
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < 15; j++) {
 
                 //Read a block of 10 samples 
                 frame = bitalino.read(10);
 
+                fichero.println("size block: " + frame.length);
+                
                 //Print the samples
                 int block_size = frame.length;
                 for (int i = 0; i < frame.length; i++) {
@@ -317,8 +306,9 @@ public class Menu {
                             + frame[i].analog[2] + " ");
 
                 }
-                fichero.close();
+                
             }
+            fichero.close();
             System.out.println("File saved");
 
             client.sendOpt(socket, 3);

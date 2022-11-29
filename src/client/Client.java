@@ -48,8 +48,6 @@ public class Client {
         try {
             OutputStream outputStream = socket.getOutputStream();
 
-            //File To Read from Bitalino
-            //File file = new File(filename); 
             BufferedReader br = new BufferedReader(new FileReader(file));
             PrintWriter printWriter = new PrintWriter(outputStream, true);
             String line;
@@ -73,7 +71,6 @@ public class Client {
     }
 
     public void sendPatient(Patient pat, Socket socket) {
-        System.out.println("sendPatient");
         String patientSend = pat.toString2();
         try {
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -88,8 +85,6 @@ public class Client {
         try {
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
             printWriter.println(email);
-            //DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            //dataOutputStream.writeBytes(password);
             printWriter.println(password);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -98,7 +93,6 @@ public class Client {
 
     public void sendOption(Socket socket, int id, int option) {
         OutputStream outputStream = null;
-        //System.out.println("Send opt");
         try {
             outputStream = socket.getOutputStream();
 
@@ -137,8 +131,6 @@ public class Client {
 
     public Patient receivePatient(Socket socket) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-        //int id = bufferedReader.read();
         int id = Integer.parseInt(bufferedReader.readLine());
         System.out.println("id:" + id);
         String name = bufferedReader.readLine();
@@ -167,11 +159,9 @@ public class Client {
     }
 
     public int receivepatientId(Socket socket) throws IOException {
-        //BufferedReader bufferedReader = null;
         int id;
         InputStream inputstream = socket.getInputStream();
         DataInputStream dis = new DataInputStream(inputstream);
-        //bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         id = dis.readInt();
         return id;
     }
@@ -183,7 +173,6 @@ public class Client {
         System.out.println(fullName);
         System.out.println(bitalino);
         String info = fullName + "/" + bitalino;
-        //bufferedReader.close();
         return info;
     }
 
@@ -191,14 +180,15 @@ public class Client {
         String names = "";
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String line;
-       //while ((line = bufferedReader.readLine())!= null) {
-       for (int i = 0; i < 4; i++) {
+       //while ((line = bufferedReader.readLine()) != null) { //?????????????
+         //  System.out.println("names");
+       for (int i = 0; i < 6; i++) {
             line = bufferedReader.readLine();
             //System.out.println(line);
             names = line + "//" + names;
 
         }
-        //System.out.println("patient's files: " + names);
+        System.out.println("fuera while");
         return names;
     }
 
