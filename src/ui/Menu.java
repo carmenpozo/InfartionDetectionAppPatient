@@ -16,7 +16,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,46 +41,54 @@ public class Menu {
     private static Client client = new Client();
     static Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("Introduce the IP of the server you want to connect to: ");
-        String ip = InputOutput.get_String();
-        Socket socket = client.ConnectionWithServer(ip);
-        while (socket.getInetAddress() == null) {
-            System.out.println("Error, the connection to the server failed. \n Introduce another IP: ");
-            ip = InputOutput.get_String();
-            socket = client.ConnectionWithServer(ip);
-        }
-        while (true) {
-            sc = new Scanner(System.in);
-            System.out.println("\nWelcome to the Infarction Detection Application ");
-            System.out.println("\nChoose an option : ");
-            System.out.println("1.Register ");
-            System.out.println("2.Log in");
-            //System.out.println("3.Change password");
-            System.out.println("0.EXIT. ");
-
-            int opcion = InputOutput.get_int();
-
-            switch (opcion) {
-                case 1:
-                    register(socket);
-                    break;
-                case 2:
-                    login(socket);
-                    break;
-                case 0:
-                    client.sendOpt(socket, 6);
-                    client.exit();
-                    System.out.println("Connection with the server succesfully closed");
-                    System.exit(0);
-                    break;
-                default:
-                    break;
+    public static void main(String[] args) {
+        try {
+            System.out.println("Introduce the IP of the server you want to connect to: ");
+            String ip = InputOutput.get_String();
+            Socket socket = client.ConnectionWithServer(ip);
+            while (socket.getInetAddress() == null) {
+                System.out.println("Error, the connection to the server failed. \n Introduce another IP: ");
+                ip = InputOutput.get_String();
+                socket = client.ConnectionWithServer(ip);
             }
+            while (true) {
+                sc = new Scanner(System.in);
+                System.out.println("\nWelcome to the Infarction Detection Application ");
+                System.out.println("\nChoose an option : ");
+                System.out.println("1.Register ");
+                System.out.println("2.Log in");
+                //System.out.println("3.Change password");
+                System.out.println("0.EXIT. ");
+
+                int opcion = InputOutput.get_int();
+
+                switch (opcion) {
+                    case 1:
+                        register(socket);
+                        break;
+                    case 2:
+                        login(socket);
+                        break;
+                    case 0:
+                        client.sendOpt(socket, 6);
+                        client.exit();
+                        System.out.println("Connection with the server succesfully closed");
+                        System.exit(0);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } catch (SocketException e) {
+            System.out.println("Connecion failed, the server has been closed");
+        } catch (IOException ie) {
+            ie.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
     }
 
-    private static void register(Socket socket) throws Exception {
+    private static void register(Socket socket) throws IOException, SocketException, NoSuchAlgorithmException {
         System.out.println("--- NEW ACCOUNT ---");
         System.out.println("Enter your email address:");
         String email = InputOutput.get_String();
@@ -161,7 +171,7 @@ public class Menu {
         System.out.print("\nAccount created.\n");
     }
 
-    private static void login(Socket socket) throws Exception {
+    private static void login(Socket socket) throws SocketException, IOException {
         // Ask the user for an email
         System.out.println("Enter your email address: ");
         String email = InputOutput.get_String();
@@ -175,7 +185,6 @@ public class Menu {
         // Ask the user for a password
         System.out.println("Enter your password:");
         String password = InputOutput.get_String();
-        System.out.println("password: " + password);
 
         client.sendOpt(socket, 5);
         client.sendLogin(email, password, socket);
@@ -188,11 +197,11 @@ public class Menu {
         MenuPatient(id, socket);
     }
 
-    private static void MenuPatient(int id, Socket socket) throws Exception {
+    private static void MenuPatient(int id, Socket socket) throws SocketException, IOException {
         sc = new Scanner(System.in);
         while (true) {
             System.out.println("\n1.View my information. ");
-            System.out.println("2.View my file names ");
+            System.out.println("2.View my files ");
             System.out.println("3.Perform a new Bitalino");
             System.out.println("0.Return ");
             System.out.println("\nChoose an option : ");
@@ -219,40 +228,39 @@ public class Menu {
 
     }
 
-    private static void ViewInfo(Socket socket, int id) {
-
+    private static void ViewInfo(Socket socket, int id) throws IOException, SocketException {
         client.sendOption(socket, id, 1);
-
-        try {
-            Patient p = client.receivePatient(socket);
-            System.out.println(p.toString3());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Patient p = client.receivePatient(socket);
+        System.out.println(p.toString3());
     }
 
     private static void PatientFiles(Socket socket, int id) throws IOException {
 
         client.sendOption(socket, id, 2);
-        System.out.println("option see files selected");
+
         String names = client.receiveFilesNames(socket);
 
         String[] parts = names.split("//");
         List<String> files = new ArrayList();
         files = Arrays.asList(parts);
 
-        for (int i = 0; i < files.size(); i++) {
-            System.out.println("File " + (i + 1) + ": " + files.get(i));
-        }
-        System.out.println("Choose the file number you want to see:");
-        int num = InputOutput.get_int();
-        String name = files.get(num - 1);
-        File file = new File("files\\" + name);
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String line;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
+        if (files.size() == 0) {
+            System.out.println("No files yet");
+        } else {
+
+            for (int i = 0; i < files.size(); i++) {
+                System.out.println("File " + (i + 1) + ": " + files.get(i));
+            }
+
+            System.out.println("Choose the file number you want to see:");
+            int num = InputOutput.get_int();
+            String name = files.get(num - 1);
+            File file = new File("files\\" + name);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
         }
     }
 
@@ -261,6 +269,7 @@ public class Menu {
     private static void addECG(Socket socket, int id) {
         BITalino bitalino = null;
         try {
+            System.out.println("Performing the signal acquisition, please wait");
             bitalino = new BITalino();
 
             Vector<RemoteDevice> devices = bitalino.findDevices();
@@ -295,7 +304,7 @@ public class Menu {
                 frame = bitalino.read(10);
 
                 fichero.println("size block: " + frame.length);
-                
+
                 //Print the samples
                 int block_size = frame.length;
                 for (int i = 0; i < frame.length; i++) {
@@ -306,7 +315,6 @@ public class Menu {
                             + frame[i].analog[2] + " ");
 
                 }
-                
             }
             fichero.close();
             System.out.println("File saved");
@@ -315,11 +323,6 @@ public class Menu {
             client.sendFileBitalino(file, socket);
             //stop acquisition
             bitalino.stop();
-        } catch (BITalinoException ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Throwable ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
             try {
                 //close bluetooth connection
                 if (bitalino != null) {
@@ -329,7 +332,21 @@ public class Menu {
             } catch (BITalinoException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        } catch (BITalinoException ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Throwable ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        } /*finally {
+            try {
+                //close bluetooth connection
+                if (bitalino != null) {
+                    bitalino.close();
+                }
+
+            } catch (BITalinoException ex) {
+                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }*/
 
     }
 
