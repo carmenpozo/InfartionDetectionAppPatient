@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,80 +36,77 @@ public class Client {
 
     Socket socket;
 
-    public Socket ConnectionWithServer(String ip) throws IOException{
+    public Socket ConnectionWithServer(String ip) throws IOException {
         socket = new Socket();
-            socket = new Socket(ip, 9000);
+        socket = new Socket(ip, 9000);
         return socket;
     }
 
-    public void sendFileBitalino(File file, Socket socket) throws IOException,  SocketException{
-            OutputStream outputStream = socket.getOutputStream();
+    public void sendFileBitalino(String data, Socket socket) throws IOException, SocketException {
+        OutputStream outputStream = socket.getOutputStream();
+        PrintWriter printWriter = new PrintWriter(outputStream, true);
+        printWriter.println(data);
+        printWriter.println("stop");
+        System.out.println(data);
 
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            PrintWriter printWriter = new PrintWriter(outputStream, true);
-            String line;
-            while ((line = br.readLine()) != null) { // reads the file and sends it to the server
-
-                printWriter.println(line);
-
-                System.out.println(line);
-
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            printWriter.println("stop");
-            br.close();
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
-    public void sendPatient(Patient pat, Socket socket) throws IOException, SocketException{
+    public void sendPatient(Patient pat, Socket socket) throws IOException, SocketException {
         String patientSend = pat.toString2();
-            PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
-            printWriter.println(patientSend);
+        PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
+        printWriter.println(patientSend);
     }
 
-    public void sendLogin(String email, String password, Socket socket) throws IOException, SocketException{
+    public void sendLogin(String email, String password, Socket socket) throws IOException, SocketException {
 
-            PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
-            printWriter.println(email);
-            printWriter.println(password);
+        PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
+        printWriter.println(email);
+        printWriter.println(password);
     }
 
-    public void sendOption(Socket socket, int id, int option) throws IOException, SocketException{
+    public void sendFileName(String name) throws IOException, SocketException {
+        PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
+        printWriter.println(name);
+    }
+
+    public void sendOption(Socket socket, int id, int option) throws IOException, SocketException {
         OutputStream outputStream = null;
-            outputStream = socket.getOutputStream();
+        outputStream = socket.getOutputStream();
 
-            //And send it to the server
-            outputStream.write(option);
-            outputStream.write(id);
-            outputStream.flush();
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        //And send it to the server
+        outputStream.write(option);
+        outputStream.write(id);
+        outputStream.flush();
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public void sendOpt(Socket socket, int option) throws SocketException, IOException{
+    public void sendOpt(Socket socket, int option) throws SocketException, IOException {
         OutputStream outputStream = null;
-            outputStream = socket.getOutputStream();
-            //And send it to the server
-            outputStream.write(option);
-            outputStream.flush();
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        outputStream = socket.getOutputStream();
+        //And send it to the server
+        outputStream.write(option);
+        outputStream.flush();
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public Patient receivePatient(Socket socket) throws IOException,SocketException {
+    public Patient receivePatient(Socket socket) throws IOException, SocketException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         int id = Integer.parseInt(bufferedReader.readLine());
-        String name = bufferedReader.readLine();  
+        String name = bufferedReader.readLine();
         String surname = bufferedReader.readLine();
         String gender = bufferedReader.readLine();
         Date birthDate = Date.valueOf(bufferedReader.readLine());
@@ -120,7 +118,6 @@ public class Client {
         String bitalino = bufferedReader.readLine();
 
         Patient patient = new Patient(id, name, surname, gender, birthDate, bloodType, email, pw2, symptoms, bitalino);
-
 
         bufferedReader.close();
         return patient;
@@ -148,11 +145,22 @@ public class Client {
         String names = "";
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String line;
-       while (!((line = bufferedReader.readLine()).equals("stop"))) { 
+        while (!((line = bufferedReader.readLine()).equals("stop"))) {
             names = line + "//" + names;
 
         }
         return names;
+    }
+
+    public String receiveFiles(Socket socket) throws IOException {
+        String file = "";
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String line;
+        while (!((line = bufferedReader.readLine()).equals("stop"))) {
+            file = file + "\n" + line;
+
+        }
+        return file;
     }
 
     private static void releaseResources(PrintWriter printWriter,
@@ -187,10 +195,10 @@ public class Client {
         }
     }
 
-    public void sendEmail(Socket socket, String email) throws IOException, SocketException{
+    public void sendEmail(Socket socket, String email) throws IOException, SocketException {
         PrintWriter printWriter;
-            printWriter = new PrintWriter(socket.getOutputStream(), true);
-            printWriter.println(email);
+        printWriter = new PrintWriter(socket.getOutputStream(), true);
+        printWriter.println(email);
 
     }
 

@@ -9,12 +9,7 @@ import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.Frame;
 import client.Client;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.security.MessageDigest;
@@ -237,7 +232,6 @@ public class Menu {
     private static void PatientFiles(Socket socket, int id) throws IOException {
 
         client.sendOption(socket, id, 2);
-
         String names = client.receiveFilesNames(socket);
 
         String[] parts = names.split("//");
@@ -255,12 +249,13 @@ public class Menu {
             System.out.println("Choose the file number you want to see:");
             int num = InputOutput.get_int();
             String name = files.get(num - 1);
-            File file = new File("files\\" + name);
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-            }
+            client.sendOpt(socket, 9);
+            client.sendFileName(name);
+            String file = client.receiveFiles(socket);
+            System.out.println("FILE CONTENT: ");
+            System.out.println(file);
+
+          
         }
     }
 
@@ -285,42 +280,36 @@ public class Menu {
 
             int[] channelsToAcquire = {1, 4};
             bitalino.start(channelsToAcquire);
-            PrintWriter fichero = null;
+            String data = null;
             LocalDateTime current = LocalDateTime.now();
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy.HH-mm-ss");
             String formattedDateTime = current.format(format);
 
-            File file = new File("files\\patient" + id + "_" + formattedDateTime + ".txt");
-            fichero = new PrintWriter(new FileWriter(file), true);
+            data = id + "\n" + formattedDateTime + "\n" + fullName;
 
-            fichero.println(id);
-            fichero.println(formattedDateTime);
-            fichero.println(fullName);
-
-            //read 10 samples
+            //read 15 samples
             for (int j = 0; j < 15; j++) {
 
                 //Read a block of 10 samples 
                 frame = bitalino.read(10);
 
-                fichero.println("size block: " + frame.length);
+                data = data + "\n" + "size block: " + frame.length;
 
-                //Print the samples
+                //Add the samples to a string
                 int block_size = frame.length;
                 for (int i = 0; i < frame.length; i++) {
 
-                    fichero.println((j * block_size + i) + " seq: " + frame[i].seq + " "
+                    data = data + "\n" + ((j * block_size + i) + " seq: " + frame[i].seq + " "
                             + frame[i].analog[0] + " "
                             + frame[i].analog[1] + " "
                             + frame[i].analog[2] + " ");
 
                 }
             }
-            fichero.close();
-            System.out.println("File saved");
+            System.out.println("Signal acquisition has finished");
 
             client.sendOpt(socket, 3);
-            client.sendFileBitalino(file, socket);
+            client.sendFileBitalino(data, socket);
             //stop acquisition
             bitalino.stop();
             try {
@@ -336,7 +325,8 @@ public class Menu {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Throwable ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        } /*finally {
+        }
+        /*finally {
             try {
                 //close bluetooth connection
                 if (bitalino != null) {
