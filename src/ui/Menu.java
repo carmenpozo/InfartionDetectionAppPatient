@@ -250,7 +250,7 @@ public class Menu {
             int num = InputOutput.get_int();
             String name = files.get(num - 1);
             client.sendOpt(socket, 9);
-            client.sendFileName(name);
+            client.sendFileName(name, socket);
             String file = client.receiveFiles(socket);
             System.out.println("FILE CONTENT: ");
             System.out.println(file);
