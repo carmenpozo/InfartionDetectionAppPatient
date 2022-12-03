@@ -69,7 +69,6 @@ public class Client {
     public void sendOption(Socket socket, int id, int option) throws IOException, SocketException {
         OutputStream outputStream = null;
         outputStream = socket.getOutputStream();
-
         //And send it to the server
         outputStream.write(option);
         outputStream.write(id);

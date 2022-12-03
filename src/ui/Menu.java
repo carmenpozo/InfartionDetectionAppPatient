@@ -255,7 +255,6 @@ public class Menu {
             System.out.println("FILE CONTENT: ");
             System.out.println(file);
 
-          
         }
     }
 
@@ -301,8 +300,7 @@ public class Menu {
 
                     data = data + "\n" + ((j * block_size + i) + " seq: " + frame[i].seq + " "
                             + frame[i].analog[0] + " "
-                            + frame[i].analog[1] + " "
-                            + frame[i].analog[2] + " ");
+                            + frame[i].analog[1] + " ");
 
                 }
             }
@@ -326,17 +324,6 @@ public class Menu {
         } catch (Throwable ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
         }
-        /*finally {
-            try {
-                //close bluetooth connection
-                if (bitalino != null) {
-                    bitalino.close();
-                }
-
-            } catch (BITalinoException ex) {
-                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }*/
 
     }
 
