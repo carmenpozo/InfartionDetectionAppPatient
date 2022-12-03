@@ -52,7 +52,6 @@ public class Menu {
                 System.out.println("\nChoose an option : ");
                 System.out.println("1.Register ");
                 System.out.println("2.Log in");
-                //System.out.println("3.Change password");
                 System.out.println("0.EXIT. ");
 
                 int opcion = InputOutput.get_int();
@@ -76,10 +75,8 @@ public class Menu {
             }
         } catch (SocketException e) {
             System.out.println("Connecion failed, the server has been closed");
-        } catch (IOException ie) {
+        } catch (IOException | NoSuchAlgorithmException ie) {
             ie.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
         }
     }
 
@@ -238,7 +235,7 @@ public class Menu {
         List<String> files = new ArrayList();
         files = Arrays.asList(parts);
 
-        if (files.size() == 0) {
+        if (files.isEmpty()) {
             System.out.println("No files yet");
         } else {
 
@@ -248,6 +245,10 @@ public class Menu {
 
             System.out.println("Choose the file number you want to see:");
             int num = InputOutput.get_int();
+            while(num > files.size() || num == 0){
+                System.out.println("Invalid file number. Please insert a valid number [1 - " + files.size() + "]");
+                num = InputOutput.get_int();
+            }
             String name = files.get(num - 1);
             client.sendOpt(socket, 9);
             client.sendFileName(name, socket);
