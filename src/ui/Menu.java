@@ -75,6 +75,7 @@ public class Menu {
             }
         } catch (SocketException e) {
             System.out.println("Connecion failed, the server has been closed");
+            e.printStackTrace();
         } catch (IOException | NoSuchAlgorithmException ie) {
             ie.printStackTrace();
         }
@@ -226,8 +227,8 @@ public class Menu {
         System.out.println(p.toString3());
     }
 
-    private static void PatientFiles(Socket socket, int id) throws IOException {
-
+    private static void PatientFiles(Socket socket, int id) throws IOException{
+        
         client.sendOption(socket, id, 2);
         String names = client.receiveFilesNames(socket);
 
