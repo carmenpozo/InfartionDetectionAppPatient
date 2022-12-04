@@ -65,7 +65,13 @@ public class Client {
         //And send it to the server
         outputStream.write(option);
         outputStream.write(id);
-      
+        outputStream.flush();
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     public void sendOpt(Socket socket, int option) throws SocketException, IOException {
@@ -73,7 +79,13 @@ public class Client {
         outputStream = socket.getOutputStream();
         //And send it to the server
         outputStream.write(option);
-        
+        outputStream.flush();
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     public Patient receivePatient(Socket socket) throws IOException, SocketException {
@@ -133,7 +145,6 @@ public class Client {
         }
         return file;
     }
-
 
     public void exit() {
         releaseResources(socket);
